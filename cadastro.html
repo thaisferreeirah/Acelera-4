@@ -1,1 +1,30 @@
 <!-- tela de cadastro -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Reconhecimento Facial</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="register-container">
+        <h1>Cadastro de Usuário</h1>
+        <div class="camera-preview">
+            <video id="registerVideo" width="320" height="240" autoplay></video>
+            <canvas id="registerCanvas" width="320" height="240"></canvas>
+        </div>
+        <button id="registerCaptureBtn" class="btn">Capturar Rosto</button>
+        
+        <div class="register-form">
+            <input type="text" placeholder="Nome Completo" id="fullName">
+            <input type="email" placeholder="E-mail" id="email">
+            <input type="text" placeholder="Usuário" id="newUsername">
+            <input type="password" placeholder="Senha" id="newPassword">
+            <button class="btn" id="registerBtn">Cadastrar</button>
+            <p>Já tem conta? <a href="../index.html">Faça login</a></p>
+        </div>
+    </div>
+    <script src="../script.js"></script>
+</body>
+</html>
