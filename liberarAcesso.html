@@ -1,0 +1,149 @@
+
+
+
+<!-- tem que ter um botao abrir portao  cadastrar quem entrou e tem que salvar registros  campo descrição o motivo  -->
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Controle de Acesso - Escola</title>
+  <style>
+    :root {
+      --verde-escuro: #006400;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f5f5f5;
+    }
+
+    header {
+      background-color: var(--verde-escuro);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+
+    .container {
+      margin-top: 2rem;
+    }
+
+    button {
+      background-color: var(--verde-escuro);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    Controle de Acesso Manual - Escola
+  </header>
+
+  <div class="container">
+    <button onclick="abrirPortao()">🔓 Abrir Portão</button>
+
+    <h2>Registrar Entrada</h2>
+    <input type="text" id="nome" placeholder="Nome da pessoa">
+    <textarea id="descricao" placeholder="Motivo da entrada"></textarea>
+    <button onclick="registrarEntrada()">Registrar Entrada</button>
+
+    <h2>Registros</h2>
+    <table id="tabela-registros">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Motivo</th>
+          <th>Data/Hora</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- registros vão aparecer aqui -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function abrirPortao() {
+      alert("Portão aberto manualmente!");
+      // Aqui você poderia integrar com hardware ou API
+    }
+
+    function registrarEntrada() {
+      const nome = document.getElementById('nome').value.trim();
+      const descricao = document.getElementById('descricao').value.trim();
+
+      if (!nome || !descricao) {
+        alert("Preencha todos os campos!");
+        return;
+      }
+
+      const dataHora = new Date().toLocaleString();
+
+      const registro = { nome, descricao, dataHora };
+
+      let registros = JSON.parse(localStorage.getItem('registros')) || [];
+      registros.push(registro);
+      localStorage.setItem('registros', JSON.stringify(registros));
+
+      document.getElementById('nome').value = '';
+      document.getElementById('descricao').value = '';
+      atualizarTabela();
+    }
+
+    function atualizarTabela() {
+      const registros = JSON.parse(localStorage.getItem('registros')) || [];
+      const tbody = document.querySelector('#tabela-registros tbody');
+      tbody.innerHTML = '';
+
+      registros.forEach(reg => {
+        const linha = document.createElement('tr');
+        linha.innerHTML = `
+          <td>${reg.nome}</td>
+          <td>${reg.descricao}</td>
+          <td>${reg.dataHora}</td>
+        `;
+        tbody.appendChild(linha);
+      });
+    }
+
+    // Atualiza a tabela ao carregar
+    atualizarTabela();
+  </script>
+
+</body>
+</html>
