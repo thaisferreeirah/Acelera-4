@@ -1,43 +1,23 @@
-import cv2
-import face_recognition
+from flask import Flask, request
+import requests
 
-# Carregar uma imagem de referência (banco de dados)
-known_image = face_recognition.load_image_file("johnny_foto.jpg")
-known_encoding = face_recognition.face_encodings(known_image)[0]  # Extraindo características faciais
+app = Flask(__name__)
 
-# Capturar vídeo da ESP32-CAM
-esp32_url = "http://192.168.83.122:81/stream"
-cap = cv2.VideoCapture(esp32_url)
+ESP32_WROOM_URL = "http://192.168.0.5/activate"  # URL do ESP32-WROOM
 
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
+@app.route('/recognition', methods=['POST'])
+def face_recognition():
+    data = request.json  # Recebe dados JSON do ESP32-CAM
+    if data and data.get("recognized") == True:
+        person_name = data.get("name")
+        print(f"Rosto reconhecido: {person_name}")
 
-    # Converter o frame para RGB (necessário para face_recognition)
-    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # Enviar comando para ESP32-WROOM ativar o motor
+        requests.get(ESP32_WROOM_URL)
 
-    # Detectar e codificar rostos no frame
-    face_locations = face_recognition.face_locations(rgb_frame)
-    face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
+        return {"status": "motor activated"}, 200
 
-    for face_encoding, face_location in zip(face_encodings, face_locations):
-        # Comparar com o rosto conhecido
-        matches = face_recognition.compare_faces([known_encoding], face_encoding)
-        name = "Desconhecido"
+    return {"status": "no recognition"}, 400
 
-        if True in matches:
-            name = "Pessoa Conhecida"
-
-        # Desenhar um retângulo ao redor do rosto e mostrar o nome
-        top, right, bottom, left = face_location
-        cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-        cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
-    cv2.imshow("Reconhecimento Facial", frame)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
