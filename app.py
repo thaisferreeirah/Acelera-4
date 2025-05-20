@@ -1,23 +1,25 @@
-from flask import Flask, request
-import requests
+from flask import Flask
+from db import db
+
+from routes.main import main
+from routes.auth import auth
+from routes.members import members
+from routes.students import students
+from routes.esp import cam
 
 app = Flask(__name__)
 
-ESP32_WROOM_URL = "http://192.168.0.5/activate"  # URL do ESP32-WROOM
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123@localhost:5432/meubanco'
 
-@app.route('/recognition', methods=['POST'])
-def face_recognition():
-    data = request.json  # Recebe dados JSON do ESP32-CAM
-    if data and data.get("recognized") == True:
-        person_name = data.get("name")
-        print(f"Rosto reconhecido: {person_name}")
+app.secret_key = "segredo"
 
-        # Enviar comando para ESP32-WROOM ativar o motor
-        requests.get(ESP32_WROOM_URL)
+db.init_app(app)
 
-        return {"status": "motor activated"}, 200
+with app.app_context():
+    db.create_all()
 
-    return {"status": "no recognition"}, 400
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+app.register_blueprint(main)
+app.register_blueprint(auth)
+app.register_blueprint(members)
+app.register_blueprint(students)
+app.register_blueprint(cam)
