@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Captura ESP32-CAM</title>
+</head>
+<body>
+    <h1>Transmissão do ESP32-CAM</h1>
+    <!-- <img id="video" src="http://192.168.83.122:81/stream" alt="ESP32-CAM Video"> -->
+    <img id="video" src="http://192.168.83.122:81/stream" crossOrigin="anonymous" alt="ESP32-CAM Video">
+    <br>
+    <button id="capture">Capturar Imagem</button>
+    <br>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <script>
+        document.getElementById("capture").addEventListener("click", function() {
+            let video = document.getElementById("video");
+            let canvas = document.getElementById("canvas");
+            let ctx = canvas.getContext("2d");
+            canvas.width = video.width;
+            canvas.height = video.height;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            let imgData = canvas.toDataURL("image/png"); // Obtém imagem base64
+            
+            // Enviar para o servidor Flask
+            fetch("/salvar_imagem", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ imagem: imgData })
+            }).then(response => response.json()).then(data => {
+                alert(data.mensagem); // Exibe mensagem de sucesso
+            });
+        });
+    </script>
+</body>
+</html>
