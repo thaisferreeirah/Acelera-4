@@ -6,7 +6,6 @@ import base64
 app = Flask(__name__)
 
 ESP32_WROOM_URL = "http://esp32wroom.local/activate" # URL do ESP32-WROOM
-
 ESP32_CAM_URL = "http://esp32cam.local:81/stream" # URL do ESP32-CAM
 
 def generate_frames():
@@ -56,6 +55,5 @@ def save_photo():
 
     return {"mensagem": f"Imagem '{nome}.png' salva com sucesso!"}
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="192.168.83.89", port=5000, debug=True)

@@ -41,7 +41,6 @@
         <img id="video" src="{{ url_for('stream') }}" crossOrigin="anonymous" alt="ESP32-CAM Video"> <!-- Exibe a transmissão obtida pela url -->
         <br>
 
-        <!-- Textbox para inserir o nome -->
         <label for="name">Nome:</label>
         <input type="text" id="name">
         <br>
@@ -71,7 +70,7 @@
 
             let imgData = canvas.toDataURL("image/png"); // Obtém imagem base64
             
-            // Enviar para o servidor Flask com o nome inserido
+            // Enviar para o servidor Flask
             fetch("/save_photo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
