@@ -36,10 +36,9 @@
     </style>
 </head>
 <body>
-
     <h1>Transmissão do ESP32-CAM</h1>
     <div class="container">
-        <img id="video" src="http://192.168.83.122:81/stream" crossOrigin="anonymous" alt="ESP32-CAM Video">
+        <img id="video" src="{{ url_for('stream') }}" crossOrigin="anonymous" alt="ESP32-CAM Video"> <!-- Exibe a transmissão obtida pela url -->
         <br>
 
         <!-- Textbox para inserir o nome -->
@@ -73,7 +72,7 @@
             let imgData = canvas.toDataURL("image/png"); // Obtém imagem base64
             
             // Enviar para o servidor Flask com o nome inserido
-            fetch("/salvar_imagem", {
+            fetch("/save_photo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ imagem: imgData, nome: enteredName })
@@ -82,6 +81,5 @@
             });
         });
     </script>
-
 </body>
 </html>

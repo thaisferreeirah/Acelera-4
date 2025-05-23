@@ -15,8 +15,7 @@ known_faces = {
 print("Codificações carregadas:", known_faces)
 
 # Capturar vídeo da ESP32-CAM
-#esp32_cam_url = "http://192.168.0.4:81/stream" # Casa
-esp32_cam_url = "http://192.168.83.122:81/stream" # Celular
+esp32_cam_url = "http://esp32cam.local:81/stream"
 
 cap = cv2.VideoCapture(esp32_cam_url)
 
