@@ -3,7 +3,8 @@ import face_recognition
 import time
 import requests
 
-FLASK_SERVER_URL = "http://192.168.0.3:5000/recognition"
+#FLASK_SERVER_URL = "http://192.168.0.3:5000/recognition" # Casa
+FLASK_SERVER_URL = "http://192.168.83.89:5000/recognition" # Celular
 
 # Carregar imagens de referência
 known_faces = {
@@ -14,8 +15,10 @@ known_faces = {
 print("Codificações carregadas:", known_faces)
 
 # Capturar vídeo da ESP32-CAM
-esp32_url = "http://192.168.0.4:81/stream"
-cap = cv2.VideoCapture(esp32_url)
+#esp32_cam_url = "http://192.168.0.4:81/stream" # Casa
+esp32_cam_url = "http://192.168.83.122:81/stream" # Celular
+
+cap = cv2.VideoCapture(esp32_cam_url)
 
 welcome_message = None  # Variável para armazenar o nome reconhecido
 message_start_time = 0  # Tempo em que a mensagem começou a ser exibida
