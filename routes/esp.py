@@ -1,11 +1,28 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, Response
+import cv2
 import requests
 import base64
 
 app = Flask(__name__)
 
-#ESP32_WROOM_URL = "http://192.168.0.5/activate"  # URL do ESP32-WROOM Casa
-ESP32_WROOM_URL = "http://192.168.83.136/activate" # Celular
+ESP32_WROOM_URL = "http://esp32wroom.local/activate" # URL do ESP32-WROOM
+
+ESP32_CAM_URL = "http://esp32cam.local:81/stream" # URL do ESP32-CAM
+
+def generate_frames():
+    cap = cv2.VideoCapture(ESP32_CAM_URL)
+    while True:
+        success, frame = cap.read()
+        if not success:
+            break
+        else:
+            _, buffer = cv2.imencode('.jpg', frame)
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+
+@app.route('/stream')
+def stream():
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/recognition', methods=['POST'])
 def face_recognition():
@@ -25,18 +42,20 @@ def face_recognition():
 def home():
     return render_template('takephoto.html')
 
-@app.route('/salvar_imagem', methods=['POST'])
-def salvar_imagem():
-    data = request.json['imagem']
+@app.route('/save_photo', methods=['POST'])
+def save_photo():
+    data = request.json
+    nome = data['nome'].strip().replace(" ", "_")  # Remover espaços e evitar problemas
     
     # Remover cabeçalho do base64 e converter para binário
-    img_data = base64.b64decode(data.split(',')[1])
+    img_data = base64.b64decode(data['imagem'].split(',')[1])
 
-    # Salvar na pasta do projeto
-    with open("static/captura.png", "wb") as f:
+    # Salvar com o nome fornecido
+    with open(f"static/{nome}.png", "wb") as f:
         f.write(img_data)
 
-    return {"mensagem": "Imagem salva com sucesso!"}
+    return {"mensagem": f"Imagem '{nome}.png' salva com sucesso!"}
+
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)

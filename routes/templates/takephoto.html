@@ -3,33 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <title>Captura ESP32-CAM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        #video {
+            width: 80%;
+            border: 2px solid #333;
+            margin-bottom: 10px;
+        }
+        input, button {
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <h1>Transmissão do ESP32-CAM</h1>
-    <!-- <img id="video" src="http://192.168.83.122:81/stream" alt="ESP32-CAM Video"> -->
-    <img id="video" src="http://192.168.83.122:81/stream" crossOrigin="anonymous" alt="ESP32-CAM Video">
-    <br>
-    <button id="capture">Capturar Imagem</button>
-    <br>
+    <div class="container">
+        <img id="video" src="{{ url_for('stream') }}" crossOrigin="anonymous" alt="ESP32-CAM Video"> <!-- Exibe a transmissão obtida pela url -->
+        <br>
+
+        <!-- Textbox para inserir o nome -->
+        <label for="name">Nome:</label>
+        <input type="text" id="name">
+        <br>
+
+        <button id="capture">Capturar Imagem</button>
+        <br>
+        <p id="status" class="success"></p>
+    </div>
+
     <canvas id="canvas" style="display:none;"></canvas>
+
     <script>
         document.getElementById("capture").addEventListener("click", function() {
             let video = document.getElementById("video");
             let canvas = document.getElementById("canvas");
             let ctx = canvas.getContext("2d");
+            let enteredName = document.getElementById("name").value.trim();
+            
+            if (!enteredName) {
+                alert("Por favor, insira um nome antes de capturar a imagem.");
+                return;
+            }
+            
             canvas.width = video.width;
             canvas.height = video.height;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
             let imgData = canvas.toDataURL("image/png"); // Obtém imagem base64
             
-            // Enviar para o servidor Flask
-            fetch("/salvar_imagem", {
+            // Enviar para o servidor Flask com o nome inserido
+            fetch("/save_photo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ imagem: imgData })
+                body: JSON.stringify({ imagem: imgData, nome: enteredName })
             }).then(response => response.json()).then(data => {
-                alert(data.mensagem); // Exibe mensagem de sucesso
+                document.getElementById("status").innerText = "Imagem salva com sucesso!";
             });
         });
     </script>
