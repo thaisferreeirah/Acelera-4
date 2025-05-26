@@ -225,7 +225,7 @@
 
 .card2 {
   width: 100%;
-  max-width: 500px;           /* Largura máxima do formulário */
+  max-width: 500px;          /* Largura máxima do formulário */ 
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
@@ -377,12 +377,6 @@
         display: none;
     }
 }
-
-
-
-
-
-
 
 
     /* Menu superior */
