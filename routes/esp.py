@@ -1,9 +1,9 @@
-from flask import Flask, request, render_template, Response
+from flask import Blueprint, request, render_template, Response
 import cv2
 import requests
 import base64
 
-app = Flask(__name__)
+esp = Blueprint("esp", __name__)
 
 ESP32_WROOM_URL = "http://esp32wroom.local/activate" # URL do ESP32-WROOM
 ESP32_CAM_URL = "http://esp32cam.local:81/stream" # URL do ESP32-CAM
@@ -19,11 +19,11 @@ def generate_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
-@app.route('/stream')
+@esp.route('/stream')
 def stream():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/recognition', methods=['POST'])
+@esp.route('/recognition', methods=['POST'])
 def face_recognition():
     data = request.json  # Recebe dados JSON do ESP32-CAM
     if data and data.get("recognized") == True:
@@ -37,11 +37,15 @@ def face_recognition():
 
     return {"status": "no recognition"}, 400
 
-@app.route('/takephoto')
-def home():
+@esp.route('/takephoto')
+def takephoto():
     return render_template('takephoto.html')
 
-@app.route('/save_photo', methods=['POST'])
+@esp.route('/recognition_page')
+def recognition_page():
+    return render_template('recognition.html')  # Novo nome do HTML
+
+@esp.route('/save_photo', methods=['POST'])
 def save_photo():
     data = request.json
     nome = data['nome'].strip().replace(" ", "_")  # Remover espaços e evitar problemas
@@ -55,5 +59,94 @@ def save_photo():
 
     return {"mensagem": f"Imagem '{nome}.png' salva com sucesso!"}
 
-if __name__ == "__main__":
-    app.run(host="192.168.83.89", port=5000, debug=True)
+
+################################################
+import cv2
+import face_recognition
+import time
+import os
+
+FLASK_SERVER_URL = "http://192.168.83.89:5000/recognition"
+ESP32_CAM_URL = "http://esp32cam.local:81/stream"
+
+# Caminho da pasta onde estão as imagens
+STATIC_FOLDER = "./static"
+
+# Dicionário para armazenar as codificações faciais
+known_faces = {}
+
+# Listar todos os arquivos da pasta static
+for filename in os.listdir(STATIC_FOLDER):
+    if filename.endswith((".jpg", ".jpeg", ".png")):  # Filtrar apenas imagens
+        person_name = os.path.splitext(filename)[0]  # Nome sem extensão
+        image_path = os.path.join(STATIC_FOLDER, filename)
+
+        try:
+            image = face_recognition.load_image_file(image_path)
+            encoding = face_recognition.face_encodings(image)
+            if encoding:  # Verifica se houve codificação
+                known_faces[person_name] = encoding[0]
+                print(f"Carregado: {person_name}")
+            else:
+                print(f"Falha ao carregar {filename}, rosto não encontrado.")
+
+        except Exception as e:
+            print(f"Erro ao processar {filename}: {e}")
+
+pause_recognition = False  # Variável para controlar a pausa
+pause_start_time = 0  # Tempo de início da pausa
+
+def generate_frames():
+    global pause_recognition, pause_start_time
+    cap = cv2.VideoCapture(ESP32_CAM_URL)
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        # Se estiver pausado, espera 3 segundos antes de voltar a reconhecer
+        if pause_recognition and time.time() - pause_start_time < 3:
+            _, buffer = cv2.imencode('.jpg', frame)
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+            continue  # Não faz reconhecimento facial neste frame
+
+        # Convertendo frame para RGB
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        # Detectando e codificando rostos
+        face_locations = face_recognition.face_locations(rgb_frame)
+        face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
+
+        for face_encoding, face_location in zip(face_encodings, face_locations):
+            name = "Desconhecido"
+            for person_name, known_encoding in known_faces.items():
+                matches = face_recognition.compare_faces([known_encoding], face_encoding)
+                if True in matches:
+                    name = person_name
+                    break
+
+            top, right, bottom, left = face_location
+            cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+            cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+            if name != "Desconhecido":
+                data = {"recognized": True, "name": name}
+                requests.post(FLASK_SERVER_URL, json=data)
+
+                # Ativar pausa de reconhecimento
+                pause_recognition = True
+                pause_start_time = time.time()
+
+        _, buffer = cv2.imencode('.jpg', frame)
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
+
+        # Após 3 segundos, desativa a pausa
+        if pause_recognition and time.time() - pause_start_time >= 3:
+            pause_recognition = False
+
+@esp.route('/video_feed')
+def video_feed():
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')

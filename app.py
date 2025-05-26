@@ -5,7 +5,7 @@ from routes.main import main
 from routes.auth import auth
 from routes.members import members
 from routes.students import students
-from routes.esp import cam
+from routes.esp import esp
 
 app = Flask(__name__)
 
@@ -22,4 +22,8 @@ app.register_blueprint(main)
 app.register_blueprint(auth)
 app.register_blueprint(members)
 app.register_blueprint(students)
-app.register_blueprint(cam)
+app.register_blueprint(esp)
+
+if __name__ == "__main__":
+    #app.run(host="192.168.83.89", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
