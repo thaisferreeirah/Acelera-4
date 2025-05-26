@@ -232,3 +232,5 @@ function simulateAccess() {
     alert(`Acesso registrado para ${randomStudent.name} (${access.accessType} via ${access.method})`);
     loadAccessHistory();
 }
+
+

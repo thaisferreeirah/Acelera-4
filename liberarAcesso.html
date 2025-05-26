@@ -1,106 +1,97 @@
 
 
-
-<!-- tem que ter um botao abrir portao  cadastrar quem entrou e tem que salvar registros  campo descrição o motivo  -->
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controle de Acesso - Escola</title>
-  <style>
-    :root {
-      --verde-escuro: #006400;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      background-color: #f5f5f5;
-    }
-
-    header {
-      background-color: var(--verde-escuro);
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.5rem;
-    }
-
-    .container {
-      margin-top: 2rem;
-    }
-
-    button {
-      background-color: var(--verde-escuro);
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-bottom: 1rem;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 0.5rem;
-      margin: 0.5rem 0 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 2rem;
-    }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 0.75rem;
-      text-align: left;
-    }
-
-    th {
-      background-color: #e0e0e0;
-    }
-  </style>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Menu Superior -->
+      <nav class="menu-superior">
+    <div class="logo-menu">
+      <i class="fas fa-school"></i>
+      <h2>Controle de Acesso</h2>
+    </div>
+    
+    <ul class="itens-menu">
+      <li><a href="dashboard.html"><i class="fas fa-home"></i> </a></li>
+      <li><a href="historico.html" class="ativo"><i class="fas fa-history"></i> Histórico</a></li>
+      <li><a href="alunos.html"><i class="fas fa-users"></i> Alunos</a></li>
+      <li><a href="liberarAcesso.html"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
+      <li><a href="cadastro.html"><i class=""></a>cadatro funcionario</li>
+      <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+    </ul>
+  </nav>
 
-  <header>
-    Controle de Acesso Manual - Escola
-  </header>
-
-  <div class="container">
-    <button onclick="abrirPortao()">🔓 Abrir Portão</button>
-
-    <h2>Registrar Entrada</h2>
-    <input type="text" id="nome" placeholder="Nome da pessoa">
-    <textarea id="descricao" placeholder="Motivo da entrada"></textarea>
-    <button onclick="registrarEntrada()">Registrar Entrada</button>
-
-    <h2>Registros</h2>
-    <table id="tabela-registros">
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>Motivo</th>
-          <th>Data/Hora</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- registros vão aparecer aqui -->
-      </tbody>
-    </table>
+  <!-- Conteúdo Principal -->
+  <div class="conteudo-principal">
+    <div class="cartao">
+      <div class="cabecalho-cartao">
+        <h2><i class="fas fa-door-open"></i> Controle de Acesso Manual</h2>
+      </div>
+      
+      <div class="grupo-formulario">
+        <button class="botao botao-primario" onclick="abrirPortao()">
+          <i class="fas fa-door-open"></i> Abrir Portão
+        </button>
+      </div>
+      
+      <h3><i class="fas fa-user-plus"></i> Registrar Entrada</h3>
+      
+      <div class="grupo-formulario">
+        <input type="text" id="nome" placeholder="Nome completo">
+      </div>
+      
+      <div class="grupo-formulario">
+        <textarea id="descricao" placeholder="Motivo da entrada"></textarea>
+      </div>
+      
+      <button class="botao botao-secundario" onclick="registrarEntrada()">
+        <i class="fas fa-save"></i> Registrar Entrada
+      </button>
+    </div>
+    
+    <div class="cartao">
+      <div class="cabecalho-cartao">
+        <h2><i class="fas fa-history"></i> Histórico de Acessos</h2>
+      </div>
+      
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Motivo</th>
+            <th>Data/Hora</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-registros">
+          <!-- Registros serão inseridos aqui pelo JavaScript -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
     function abrirPortao() {
       alert("Portão aberto manualmente!");
-      // Aqui você poderia integrar com hardware ou API
+      // Aqui você poderia integrar com hardware ou API para abrir o portão fisicamente
+      
+      // Registrar a abertura do portão no histórico
+      const registro = {
+        nome: "Portão aberto manualmente",
+        descricao: "Abertura solicitada pelo operador",
+        dataHora: new Date().toLocaleString()
+      };
+      
+      let registros = JSON.parse(localStorage.getItem('registros')) || [];
+      registros.push(registro);
+      localStorage.setItem('registros', JSON.stringify(registros));
+      
+      atualizarTabela();
     }
 
     function registrarEntrada() {
@@ -120,9 +111,14 @@
       registros.push(registro);
       localStorage.setItem('registros', JSON.stringify(registros));
 
+      // Limpar campos
       document.getElementById('nome').value = '';
       document.getElementById('descricao').value = '';
+      
+      // Atualizar tabela
       atualizarTabela();
+      
+      alert("Entrada registrada com sucesso!");
     }
 
     function atualizarTabela() {
@@ -130,6 +126,9 @@
       const tbody = document.querySelector('#tabela-registros tbody');
       tbody.innerHTML = '';
 
+      // Ordenar registros do mais recente para o mais antigo
+      registros.sort((a, b) => new Date(b.dataHora) - new Date(a.dataHora));
+      
       registros.forEach(reg => {
         const linha = document.createElement('tr');
         linha.innerHTML = `
@@ -141,9 +140,8 @@
       });
     }
 
-    // Atualiza a tabela ao carregar
-    atualizarTabela();
+    // Atualizar a tabela quando a página carrega
+    document.addEventListener('DOMContentLoaded', atualizarTabela);
   </script>
-
 </body>
 </html>
