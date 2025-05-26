@@ -203,6 +203,7 @@
 .main-content {
     padding: 2rem;
     background-color: var(--cinza);
+    
 }
 
 .card {
@@ -212,7 +213,25 @@
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border-left: 4px solid var(--verde-limao);
+} 
+ .main-content2 {
+  display: flex;
+  justify-content: center;   /* Centraliza horizontalmente */
+  align-items: center;       /* Centraliza verticalmente */
+  min-height: 100vh;         /* Ocupa 100% da altura da tela */
+  padding: 20px;
+  background-color: #f9f9f9; /* Opcional: fundo suave */
 }
+
+.card2 {
+  width: 100%;
+  max-width: 500px;           /* Largura máxima do formulário */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
 
 .card-header {
     display: flex;
