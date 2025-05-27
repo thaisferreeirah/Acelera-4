@@ -388,7 +388,44 @@
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
+    }/* Adicione ao seu CSS existente */
+  .menu-superior {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .itens-menu {
+    align-items: center;
+  }
+
+  .itens-menu a {
+    padding: 0.5rem 1rem;
+  }
+
+@media (max-width: 768px) {
+  .menu-superior {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .itens-menu {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 1rem;
+  }
+  
+  .itens-menu li {
+    width: 100%;
+    margin: 0.25rem 0;
+  }
+  
+  .itens-menu a {
+    width: 100%;
+    padding: 0.75rem 1rem;
+  }
+}
 
     .logo-menu {
       display: flex;
@@ -591,4 +628,80 @@ select:focus {
     outline: none;
     border-color: #4285f4;
     box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+/* Ajustes para o layout expansivo */
+.main-content2 {
+  padding: 2rem;
+  min-height: calc(100vh - 70px); /* Considera a altura do menu superior */
+  width: 100%;
+}
+
+.card2 {
+  width: 100%;
+  max-width: 800px; /* Aumentei a largura máxima */
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.login-container {
+  width: 100%;
+  max-width: none; /* Remove a limitação de largura */
+  padding: 1.5rem 0; /* Ajuste no padding */
+}
+
+.login-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Formulário em duas colunas */
+  gap: 1.5rem;
+}
+
+.input-group {
+  margin-bottom: 0; /* Remove margem inferior já que temos gap no grid */
+}
+
+/* Faz o select ocupar toda a largura da coluna */
+.input-group select {
+  width: 100%;
+}
+
+/* Faz os últimos elementos (botão) ocuparem duas colunas */
+.login-form button[type="submit"] {
+  grid-column: span 2;
+}
+
+/* Ajustes para responsividade */
+@media (max-width: 768px) {
+  .login-form {
+    grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
+  }
+  
+  .login-form button[type="submit"] {
+    grid-column: span 1;
+  }
+}
+
+/* Melhorias visuais para os inputs */
+.input-group input, 
+.input-group select {
+  padding: 12px 15px 12px 40px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.input-group input:focus, 
+.input-group select:focus {
+  border-color: var(--verde-limao);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(165, 214, 16, 0.2);
+}
+
+/* Ajuste para o ícone no select */
+.input-group select {
+  padding-left: 40px;
+  background-position: right 15px center;
 }
