@@ -12,12 +12,13 @@ def student_signup():
     school_class = request.form.get("class")
 
     if not id:
-        return "Insira o id do aluno!"
+        return "Insira o id do aluno!", 400
     
-    # Verificar se é número
+    if not id.isdigit():
+        return "O id do aluno precisa ser um número!", 400
     
     if not name or not school_class:
-        return "Nome e classe são obrigatórios!"
+        return "Nome e classe são obrigatórios!", 400
     
     student = Student(student_id=id, student_name=name, school_class=school_class)
     db.session.add(student)
