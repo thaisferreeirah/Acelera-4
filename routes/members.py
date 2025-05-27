@@ -33,7 +33,8 @@ def auth_member_signup():
         print(len(cpf))
         return "CPF inválido!", 400
     
-    #TODO: Verificar se nome e cpf já estão cadastrados
+    if Authorized.query.filter(Authorized.cpf == cpf).first():
+        return "CPF já cadastrado em outro membro autorizado!", 409
 
     member = Authorized(authorized_name=auth_name, cpf=cpf, photo=photo)
     db.session.add(member)
@@ -81,7 +82,6 @@ def update_member(id):
     member.cpf = new_cpf
     member.photo = new_photo
 
-    # TODO: Estudar transactions
     db.session.commit()
     
     return [{
