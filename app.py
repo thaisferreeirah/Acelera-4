@@ -1,5 +1,6 @@
 from flask import Flask
 from db import db
+from routes.websocket import websocketio
 
 from routes.main import main
 from routes.auth import auth
@@ -24,6 +25,9 @@ app.register_blueprint(members)
 app.register_blueprint(students)
 app.register_blueprint(esp)
 
+websocketio.init_app(app)
+
 if __name__ == "__main__":
     #app.run(host="192.168.83.89", port=5000, debug=True)
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    #app.run(host="0.0.0.0", port=5000, debug=True)
+    websocketio.run(app, host="192.168.197.89", port=5000, debug=True)
