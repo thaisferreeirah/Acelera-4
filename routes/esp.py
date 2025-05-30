@@ -1,9 +1,9 @@
-from flask import Flask, request, render_template, Response
+from flask import Blueprint, request, render_template, Response
 import cv2
 import requests
 import base64
 
-app = Flask(__name__)
+cam = Blueprint('recognition', __name__)
 
 ESP32_WROOM_URL = "http://esp32wroom.local/activate" # URL do ESP32-WROOM
 
@@ -20,11 +20,11 @@ def generate_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
-@app.route('/stream')
+@cam.route('/stream')
 def stream():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/recognition', methods=['POST'])
+@cam.route('/recognition', methods=['POST'])
 def face_recognition():
     data = request.json  # Recebe dados JSON do ESP32-CAM
     if data and data.get("recognized") == True:
@@ -38,11 +38,11 @@ def face_recognition():
 
     return {"status": "no recognition"}, 400
 
-@app.route('/takephoto')
+@cam.route('/takephoto')
 def home():
     return render_template('takephoto.html')
 
-@app.route('/save_photo', methods=['POST'])
+@cam.route('/save_photo', methods=['POST'])
 def save_photo():
     data = request.json
     nome = data['nome'].strip().replace(" ", "_")  # Remover espaços e evitar problemas
@@ -55,7 +55,3 @@ def save_photo():
         f.write(img_data)
 
     return {"mensagem": f"Imagem '{nome}.png' salva com sucesso!"}
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
