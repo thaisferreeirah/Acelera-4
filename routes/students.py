@@ -1,8 +1,12 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template
 from models.user import db
 from models.student import Student
 
 students = Blueprint("student", __name__)
+
+@students.route("/aluno")
+def student():
+    return render_template("alunos.html")
 
 # Rotas de aluno
 @students.route("/aluno/cadastro", methods=["POST"])
@@ -25,3 +29,5 @@ def student_signup():
     db.session.commit()
 
     return "Aluno cadastrado com sucesso!", 201
+
+# TODO: criar método para listar alunos cadastrados

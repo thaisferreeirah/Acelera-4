@@ -9,7 +9,7 @@ from routes.esp import cam
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123@localhost:5432/meubanco'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:123@localhost:5432/meubanco'
 
 app.secret_key = "segredo"
 
