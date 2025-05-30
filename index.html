@@ -1,5 +1,4 @@
-<!-- tela de login -->
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -38,14 +37,193 @@
             <button type="submit" class="btn-login">Entrar <i class="fas fa-sign-in-alt"></i></button>
         </form>
         
-        <!-- <div class="login-footer">
+   <div class="login-footer">
             <p>Não tem acesso? <a href="cadastro.html">Solicite ao administrador</a></p>
-        </div> -->
+        </div> 
     </div>
     <div>
     </div>
     </nav>
 
     <script src="js/script.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Acesso Escolar - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .login-header {
+            margin-bottom: 30px;
+        }
+        
+        .icon-large {
+            font-size: 3rem;
+            color:#2E7D32;
+            margin-bottom: 15px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group:hover {
+            border-color: #2E7D32;
+        }
+        
+        .input-group i {
+            color: #666;
+            margin-right: 10px;
+            font-size: 1rem;
+        }
+        
+        .input-group input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 1rem;
+            color: #333;
+        }
+        
+        .btn-login {
+            background-color: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-login:hover {
+            background-color: #2E7D32;
+        }
+        
+        .login-footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .login-footer a {
+            color: #2E7D32;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <i class="fas fa-school icon-large"></i>
+            <h1>Controle de Acesso Escolar</h1>
+            <p>Sistema de reconhecimento facial</p>
+        </div>
+        
+        <form id="loginForm" class="login-form">
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="username" placeholder="Usuário" required>
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Senha" required>
+            </div>
+            
+            <button type="submit" class="btn-login">
+                <span>Entrar</span>
+                <i class="fas fa-sign-in-alt"></i>
+            </button>
+        </form>
+        
+        <div class="login-footer">
+            <p>Não tem acesso? <a href="#">Solicite ao administrador</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Aqui você pode adicionar a lógica de autenticação
+            console.log('Tentativa de login:', { username, password });
+            
+            // Simulação de redirecionamento após login
+            // window.location.href = 'dashboard.html';
+            
+            // Exemplo de validação simples
+            if(username && password) {
+                alert('Login realizado com sucesso!');
+            } else {
+                alert('Por favor, preencha todos os campos!');
+            }
+        });
+    </script>
 </body>
 </html>
