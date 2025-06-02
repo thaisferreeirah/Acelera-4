@@ -1,9 +1,14 @@
-from flask import Blueprint, request, session
+from flask import Blueprint, request, session, render_template
 from models.user import db, User
+from helpers import login_required
 
 auth = Blueprint("auth", __name__)
 
  #Rotas para autenticação
+@auth.route("/login")
+def loging():
+    return render_template("login.html")
+
 @auth.route("/login", methods=["POST"])
 def login():
     username = request.form.get("username")
@@ -19,6 +24,9 @@ def login():
     else:
         return "Credenciais incorretas", 401
 
+@auth.route("/cadastro")
+def signupg():
+    return render_template("cadastro.html")
 
 @auth.route("/cadastro", methods=["POST"])
 def signup():
@@ -43,6 +51,7 @@ def signup():
     return "Registrado com sucesso", 201
 
 @auth.route("/logout")
+@login_required
 def logout():
     session.clear()
     return "Sessão Limpa.", 204

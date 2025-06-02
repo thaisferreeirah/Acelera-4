@@ -1,11 +1,13 @@
 from flask import Blueprint, request, session
 import requests
+from helpers import login_required
 
 cam = Blueprint('recognition', __name__)
 
 ESP32_WROOM_URL = "http://192.168.0.5/activate"  # URL do ESP32-WROOM
 
 @cam.route('/recognition', methods=['POST'])
+@login_required
 def face_recognition():
     data = request.json  # Recebe dados JSON do ESP32-CAM
     if data and data.get("recognized") == True:
