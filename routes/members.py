@@ -1,11 +1,13 @@
 from flask import Blueprint, request
 from models.user import db
 from models.authorized_member import Authorized
+from helpers import login_required
 
 members = Blueprint("members", __name__)
 
 # Rotas parar membros autorizados
 @members.route("/membros", methods=["GET"])
+@login_required
 def get_members():
     authorized_members = Authorized.query.all()
 
@@ -24,6 +26,7 @@ def get_members():
     return members_list
 
 @members.route("/membros", methods=["POST"])
+@login_required
 def auth_member_signup():
     auth_name = request.form.get("name")
     cpf = request.form.get("cpf")
@@ -43,6 +46,7 @@ def auth_member_signup():
     return "Cadastrado com sucesso!", 201
 
 @members.route("/membros/<int:id>", methods=["GET"])
+@login_required
 def get_member(id):
     member = Authorized.query.get(id)
 
@@ -57,6 +61,7 @@ def get_member(id):
     return "Membro não encontrado!", 404
 
 @members.route("/membros/update/<int:id>", methods=["POST"])
+@login_required
 def update_member(id):
     member = Authorized.query.get(id)
 
@@ -92,6 +97,7 @@ def update_member(id):
         }]
 
 @members.route("/membros/delete/<int:id>", methods=["POST"])
+@login_required
 def delete_member(id):
     member = Authorized.query.get(id)
 

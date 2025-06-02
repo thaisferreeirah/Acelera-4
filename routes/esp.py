@@ -6,11 +6,13 @@ import base64
 import threading
 from routes.websocket import websocketio
 
+
 esp = Blueprint("esp", __name__)
 
 ESP32_WROOM_URL = "http://esp32wroom.local/activate" # URL do ESP32-WROOM
 ESP32_CAM_URL = "http://esp32cam.local:81/stream" # URL do ESP32-CAM
 FLASK_SERVER_URL = "http://192.168.197.89:5000/recognition"
+
 
 def generate_frames():
     cap = cv2.VideoCapture(ESP32_CAM_URL)
@@ -35,6 +37,9 @@ def handle_connect():
 
 @esp.route('/recognition', methods=['POST'])
 def recognition():
+
+@cam.route('/recognition', methods=['POST'])
+def face_recognition():
     data = request.json  # Recebe dados JSON do ESP32-CAM
     if data and data.get("recognized") == True:
         person_name = data.get("name")
