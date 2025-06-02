@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 from helpers import login_required
 
 main = Blueprint("main", __name__)
@@ -6,4 +6,4 @@ main = Blueprint("main", __name__)
 @main.route("/")
 @login_required
 def index():
-    return "Olá Flask"
+    return render_template("index_html")
