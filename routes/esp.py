@@ -36,9 +36,6 @@ def handle_connect():
     print("Cliente conectado!")  # Isso deve aparecer no terminal do Flask
 
 @esp.route('/recognition', methods=['POST'])
-def recognition():
-
-@cam.route('/recognition', methods=['POST'])
 def face_recognition():
     data = request.json  # Recebe dados JSON do ESP32-CAM
     if data and data.get("recognized") == True:
