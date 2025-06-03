@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Controle de Acesso Escolar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<script>
+  // Simula a tabela sendo preenchida
+  document.addEventListener('DOMContentLoaded', function() {
+    const recentAccessData = [
+      { date: "10/05/2023 08:15", name: "João Silva", id: "2023001", type: "Entrada", method: "Facial" },
+      { date: "10/05/2023 08:20", name: "Maria Oliveira", id: "2023002", type: "Entrada", method: "Facial" },
+      { date: "10/05/2023 09:05", name: "Carlos Souza", id: "2023003", type: "Entrada", method: "Cartão" },
+      { date: "10/05/2023 10:30", name: "Ana Costa", id: "2023004", type: "Saída", method: "Facial" },
+      { date: "10/05/2023 11:45", name: "Pedro Santos", id: "2023005", type: "Entrada", method: "Facial" }
+    ];
+
+    const tableBody = document.getElementById('recentAccessTable');
+    
+    recentAccessData.forEach((item, index) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${item.date}</td>
+        <td>${item.name}</td>
+        <td>${item.id}</td>
+        <td><span class="access-type ${item.type.toLowerCase()}">${item.type}</span></td>
+        <td>${item.method}</td>
+      `;
+      tableBody.appendChild(row);
+    });
+  });
+
+  // Animação para simular reconhecimento facial
+  function simulateAccess() {
+    const video = document.getElementById('video');
+    const recognitionControls = document.querySelector('.recognition-controls');
+    
+    // Efeito visual de reconhecimento
+    video.style.border = "3px solid var(--verde-limao)";
+    video.style.boxShadow = "0 0 20px rgba(165, 214, 16, 0.7)";
+    
+    // Desabilita botões durante o processo
+    recognitionControls.querySelectorAll('button').forEach(btn => {
+      btn.disabled = true;
+      btn.style.opacity = "0.7";
+    });
+    
+    // Simula tempo de processamento
+    setTimeout(() => {
+      video.style.border = "3px solid var(--verde-militar)";
+      video.style.boxShadow = "none";
+      
+      // Recria o efeito de sucesso
+      const successEffect = document.createElement('div');
+      successEffect.style.position = "absolute";
+      successEffect.style.top = "0";
+      successEffect.style.left = "0";
+      successEffect.style.width = "100%";
+      successEffect.style.height = "100%";
+      successEffect.style.background = "rgba(165, 214, 16, 0.3)";
+      successEffect.style.borderRadius = "7px";
+      successEffect.style.animation = "fadeOut 1s ease forwards";
+      
+      document.querySelector('.video-container').appendChild(successEffect);
+      
+      // Habilita botões novamente
+      recognitionControls.querySelectorAll('button').forEach(btn => {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+      });
+      
+      // Notificação de sucesso
+      alert("Acesso liberado para: Aluno Exemplo\nMatrícula: 2023001");
+    }, 2000);
+  }
+
+  // Adiciona classe dinâmica para os tipos de acesso
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      document.querySelectorAll('.access-type').forEach(el => {
+        if(el.textContent === 'Entrada') {
+          el.classList.add('entrada');
+        } else {
+          el.classList.add('saida');
+        }
+      });
+    }, 600);
+  });
+</script>
+<body>
+    <!-- menusuperior -->
+    <nav class="menu-superior">
+    <div class="logo-menu">
+        <i class="fas fa-school"></i>
+        <h2>Controle de Acesso</h2>
+    </div>
+    
+    <ul class="itens-menu">
+        <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="historico.html" class=""><i class="fas fa-history"></i> Histórico</a></li>
+        <li><a href="alunos.html"><i class="fas fa-users"></i> Alunos</a></li>
+        <li><a href="liberarAcesso.html"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
+        <li><a href="cadastro.html"><i class="fas fa-user-plus"></i> Cadastro Funcionário</a></li>
+        <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+    </ul>
+    </nav>
+        
+            <main class="main-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-chart-line"></i> Resumo de Acessos</h2>
+                    </div>
+                    <p>Bem-vindo ao sistema de controle de acesso por reconhecimento facial.</p>
+                    
+                    <div class="face-recognition">
+                        <div class="video-container">
+                            <video id="video" width="500" height="375" autoplay muted></video>
+                            <div class="canvas-container"></div>
+                        </div>
+                        
+                        <div class="recognition-controls">
+                            <button class="btn btn-primary" onclick="simulateAccess()">
+                                <i class="fas fa-user-check"></i> Simular Acesso
+                            </button>
+                            <button class="btn btn-secondary" onclick="alert('Funcionalidade de cadastro facial será implementada aqui')">
+                                <i class="fas fa-user-plus"></i> Cadastrar Rosto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-bell"></i> Últimos Acessos</h2>
+                    <a href="historico.html">Ver todos</a>
+                </div>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Aluno</th>
+                            <th>Matrícula</th>
+                            <th>Tipo</th>
+                            <th>Método</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentAccessTable">
+                        <!-- Preenchido por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/face-api.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
