@@ -19,6 +19,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     }
 });
 
+
 // Verificar autenticação em páginas protegidas
 function checkAuth() {
     if(window.location.pathname !== '/index.html' && window.location.pathname !== '/') {
