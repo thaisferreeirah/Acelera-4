@@ -16,15 +16,15 @@
             <p>Sistema de reconhecimento facial</p>
         </div>
         
-        <form id="loginForm" class="login-form">
+        <form id="loginForm" class="login-form" action="/login" method="POST">
             <div class="input-group">
                 <i class="fas fa-user"></i>
-                <input type="text" id="username" placeholder="Usuário" required>
+                <input type="text" id="username" name="username" placeholder="Usuário" required>
             </div>
             
             <div class="input-group">
                 <i class="fas fa-lock"></i>
-                <input type="password" id="password" placeholder="Senha" required>
+                <input type="password" id="password" name="password" placeholder="Senha" required>
             </div>
             
             <button type="submit" class="btn-login">
@@ -37,27 +37,5 @@
             <p>Não tem acesso? <a href="#">Solicite ao administrador</a></p>
         </div>
     </div>
-
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Aqui você pode adicionar a lógica de autenticação
-            console.log('Tentativa de login:', { username, password });
-            
-            // Simulação de redirecionamento após login
-            // window.location.href = 'dashboard.html';
-            
-            // Exemplo de validação simples
-            if(username && password) {
-                alert('Login realizado com sucesso!');
-            } else {
-                alert('Por favor, preencha todos os campos!');
-            }
-        });
-    </script>
 </body>
 </html>
