@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, render_template
+from flask import Blueprint, request, session, render_template, redirect, url_for
 from models.user import db, User
 from helpers import login_required
 
@@ -20,7 +20,7 @@ def login():
     user = User.query.filter_by(username=username).first()
     if user and user.check_password(password):
         session["user_id"] = user.id
-        return "Logado com sucesso", 200
+        return redirect(url_for("main.index"))
     else:
         return "Credenciais incorretas", 401
 
@@ -48,7 +48,7 @@ def signup():
     db.session.add(user)
     db.session.commit()
 
-    return "Registrado com sucesso", 201
+    return redirect(url_for(auth.signupg"))
 
 @auth.route("/logout")
 @login_required
