@@ -19,6 +19,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     }
 });
 
+
 // Verificar autenticação em páginas protegidas
 function checkAuth() {
     if(window.location.pathname !== '/index.html' && window.location.pathname !== '/') {
@@ -232,5 +233,39 @@ function simulateAccess() {
     alert(`Acesso registrado para ${randomStudent.name} (${access.accessType} via ${access.method})`);
     loadAccessHistory();
 }
+//script do cadasto..
+  document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Adiciona classe de animação
+    this.classList.add('form-submitted');
+    
+    // Simula envio (substitua pelo seu código real)
+    setTimeout(() => {
+      // Remove a classe após a animação
+      this.classList.remove('form-submitted');
+      
+      // Aqui você pode adicionar o redirecionamento ou feedback
+      alert('Cadastro realizado com sucesso!');
+      this.reset();
+    }, 1500);
+  });
+
+  // Efeito de máquina de escrever no título
+  const title = document.querySelector('.card-header h2');
+  if (title) {
+    const text = title.innerText;
+    title.innerText = '';
+    
+    let i = 0;
+    const typingEffect = setInterval(() => {
+      if (i < text.length) {
+        title.innerText += text.charAt(i);
+        i++;
+      } else {
+        clearInterval(typingEffect);
+      }
+    }, 100);
+  }
 
 

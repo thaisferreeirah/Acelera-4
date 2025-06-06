@@ -5,45 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Controle de Acesso Escolar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<script>
-  document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Adiciona classe de animação
-    this.classList.add('form-submitted');
-    
-    // Simula envio (substitua pelo seu código real)
-    setTimeout(() => {
-      // Remove a classe após a animação
-      this.classList.remove('form-submitted');
-      
-      // Aqui você pode adicionar o redirecionamento ou feedback
-      alert('Cadastro realizado com sucesso!');
-      this.reset();
-    }, 1500);
-  });
+    <link rel="stylesheet" href="../static/style.css">
 
-  // Efeito de máquina de escrever no título
-  const title = document.querySelector('.card-header h2');
-  if (title) {
-    const text = title.innerText;
-    title.innerText = '';
-    
-    let i = 0;
-    const typingEffect = setInterval(() => {
-      if (i < text.length) {
-        title.innerText += text.charAt(i);
-        i++;
-      } else {
-        clearInterval(typingEffect);
-      }
-    }, 100);
-  }
-</script>
+</head>
+
 <body>
-    <!-- menusuperior -->
     <nav class="menu-superior">
     <div class="logo-menu">
         <i class="fas fa-school"></i>
@@ -59,18 +25,39 @@
         <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
     </ul>
     </nav>
-    <main class="main-content2">
-            <div class="card2">
-                <div class="card-header">
-                    <h2><i class="fas fa-user-plus"></i> Cadastrar Novo funcionario</h2>
-                </div>
-    <div class="login-container">
+    <main class="main-content">
+      <div class="card">
+                    <div class="card-header">
+                         <h2><i class="fas fa-user-plus"></i> Preencha o formulário para cadastrar um novo acesso ao sistema</h2>
+                    </div>
+                    <div class="login-container">
+                      
         <div class="login-header">
             <i class="fas fa-school icon-large"></i>
             <h1>Cadastrar Acesso</h1>
-            <p>Preencha o formulário para cadastrar um novo acesso ao sistema</p>
-        </div>
-        
+            <p></p>
+        </div>           
+                    <div class="face-recognition">
+                        <div class="video-container">
+                            <video id="video" width="500" height="375" autoplay muted></video>
+                            <div class="canvas-container"></div>
+                        </div>
+                        
+                        <div class="recognition-controls">
+                            <button class="btn btn-primary" onclick="simulateAccess()">
+                                <i class="fas fa-user-check"></i> Simular Acesso
+                            </button>
+                            <button class="btn btn-secondary" onclick="alert('Funcionalidade de cadastro facial será implementada aqui')">
+                                <i class="fas fa-user-plus"></i> Cadastrar Rosto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+      </div>
+       <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-user-plus"></i> Cadastrar Novo funcionario</h2>
+                </div>
         <form id="registerForm" class="login-form">
             <div class="input-group">
                 <i class="fas fa-user"></i>
@@ -101,18 +88,16 @@
                 <i class="fas fa-phone"></i>
                 <input type="tel" id="regPhone" placeholder="Seu Telefone" required>
             </div>
-            
-            <button type="submit" class="btn-login">Cadastrar <i class="fas fa-paper-plane"></i></button>
+            <div class="recognition-controls">
+              <button type="submit" class="btn btn-secondary" class="btn-login" onclick="alert('Funcionalidade de cadastro')">
+                                <i class="fas fa-user-check"></i> Cadastrar
+              </button>
+              </div>
+            <!-- <button type="submit" class="btn-login">Cadastrar <i class="fas fa-paper-plane"></i></button> -->
         </form>
-        
-        <!-- <div class="login-footer">
-            <p>Já tem acesso? <a href="index.html">Faça login aqui</a></p>
-        </div> -->
     </div>
     </div>
     </main>
-
-
     <script src="js/script.js"></script>
 </body>
 </html>

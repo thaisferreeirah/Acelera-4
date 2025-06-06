@@ -8,6 +8,7 @@ import os
 import time
 from routes.websocket import websocketio
 
+
 esp = Blueprint("esp", __name__)
 
 ESP32_WROOM_URL = "http://esp32wroom.local/activate" # URL do ESP32-WROOM
@@ -87,7 +88,7 @@ def handle_connect():
     print("Cliente conectado!")  # Isso deve aparecer no terminal do Flask
 
 @esp.route('/recognition', methods=['POST'])
-def recognition():
+def face_recognition():
     data = request.json  # Recebe dados JSON do ESP32-CAM
     if data and data.get("recognized") == True:
         person_name = data.get("name")
