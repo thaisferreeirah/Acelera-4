@@ -54,8 +54,10 @@
     <canvas id="canvas" style="display:none;"></canvas>
 
     <script>
-        //var socket = io.connect('http://192.168.83.89:5000/'); // IP do Flask
-        var socket = io.connect('http://192.168.197.89:5000/');
+        var socket = io.connect('http://192.168.197.89:5000');
+        socket.on('stream_raw', function(frame) {
+            document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+        });
 
         socket.on('connect', function() {
             console.log("Conectado ao WebSocket!");

@@ -1,9 +1,11 @@
 from flask import Blueprint, request, render_template, Response
-from flask import Blueprint, request, render_template, Response
 import cv2
 import requests
 import base64
 import threading
+import face_recognition
+import os
+import time
 from routes.websocket import websocketio
 
 esp = Blueprint("esp", __name__)
@@ -12,22 +14,73 @@ ESP32_WROOM_URL = "http://esp32wroom.local/activate" # URL do ESP32-WROOM
 ESP32_CAM_URL = "http://esp32cam.local:81/stream" # URL do ESP32-CAM
 FLASK_SERVER_URL = "http://192.168.197.89:5000/recognition"
 
+import time
+
+ultimo_reconhecimento = 0  # Tempo da última ativação
+COOLDOWN_TIME = 7  # Tempo mínimo entre ativações (segundos)
+
 def generate_frames():
     cap = cv2.VideoCapture(ESP32_CAM_URL)
-    print("generate_frames sendo chamado!")
-    while True:
-        success, frame = cap.read()
-        if not success:
+    global reconhecimento_ativo, ultimo_reconhecimento
+    reconhecimento_ativo = False
+
+    frame_count = 0
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
             break
+
         _, buffer = cv2.imencode('.jpg', frame)
         frame_data = base64.b64encode(buffer).decode('utf-8')
-        print("Enviando frame...")  # Log de depuração
-        websocketio.emit('stream', frame_data)
+
+        # Enviar o vídeo sem reconhecimento para todas as páginas
+        websocketio.emit('stream_raw', frame_data)
+
+        # Pula o processamento facial em alguns frames para melhorar a performance
+        frame_count += 1
+        if reconhecimento_ativo and frame_count % 6 != 0:
+            continue  # Não faz o reconhecimento facial neste frame
+
+        # Se reconhecimento estiver ativo, processar rostos
+        if reconhecimento_ativo:
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            face_locations = face_recognition.face_locations(rgb_frame)
+            face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
+
+            for face_encoding in face_encodings:
+                name = "Desconhecido"
+                for person_name, known_encoding in known_faces.items():
+                    matches = face_recognition.compare_faces([known_encoding], face_encoding)
+                    if True in matches:
+                        name = person_name
+                        break
+
+                # Verifica se já passou o tempo mínimo desde a última ativação
+                tempo_atual = time.time()
+                if (tempo_atual - ultimo_reconhecimento) < COOLDOWN_TIME:
+                    continue  # Pula a ativação do motor e reconhecimento repetido
+
+                # Atualiza o tempo da última ativação
+                ultimo_reconhecimento = tempo_atual
+
+                if name != "Desconhecido":
+                    websocketio.emit('recognized_name', {"name": name})  # Enviar nome via WebSocket
+                    requests.get(ESP32_WROOM_URL)  # Ativar o motor
 
 @websocketio.on('start_stream')
 def handle_start_stream():
     print("Transmissão iniciada pelo cliente!")
     threading.Thread(target=generate_frames, daemon=True).start()
+
+@websocketio.on('enable_recognition')
+def enable_recognition():
+    global reconhecimento_ativo
+    reconhecimento_ativo = True
+
+@websocketio.on('disable_recognition')
+def disable_recognition():
+    global reconhecimento_ativo
+    reconhecimento_ativo = False
 
 @websocketio.on('connect')
 def handle_connect():
@@ -69,11 +122,6 @@ def save_photo():
 
     return {"mensagem": f"Imagem '{nome}.png' salva com sucesso!"}
 
-################################################
-import face_recognition
-import time
-import os
-
 # Caminho da pasta onde estão as imagens
 STATIC_FOLDER = "./static"
 
@@ -97,61 +145,3 @@ for filename in os.listdir(STATIC_FOLDER):
 
         except Exception as e:
             print(f"Erro ao processar {filename}: {e}")
-
-pause_recognition = False  # Variável para controlar a pausa
-pause_start_time = 0  # Tempo de início da pausa
-
-def recognition_generate_frames():
-    global pause_recognition, pause_start_time
-    cap = cv2.VideoCapture(ESP32_CAM_URL)
-
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        # Se estiver pausado, espera 3 segundos antes de voltar a reconhecer
-        if pause_recognition and time.time() - pause_start_time < 3:
-            _, buffer = cv2.imencode('.jpg', frame)
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
-            continue  # Não faz reconhecimento facial neste frame
-
-        # Convertendo frame para RGB
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-        # Detectando e codificando rostos
-        face_locations = face_recognition.face_locations(rgb_frame)
-        face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
-
-        for face_encoding, face_location in zip(face_encodings, face_locations):
-            name = "Desconhecido"
-            for person_name, known_encoding in known_faces.items():
-                matches = face_recognition.compare_faces([known_encoding], face_encoding)
-                if True in matches:
-                    name = person_name
-                    break
-
-            top, right, bottom, left = face_location
-            cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-            cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
-            if name != "Desconhecido":
-                data = {"recognized": True, "name": name}
-                requests.post(FLASK_SERVER_URL, json=data)
-
-                # Ativar pausa de reconhecimento
-                pause_recognition = True
-                pause_start_time = time.time()
-
-        _, buffer = cv2.imencode('.jpg', frame)
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
-
-        # Após 3 segundos, desativa a pausa
-        if pause_recognition and time.time() - pause_start_time >= 3:
-            pause_recognition = False
-
-@esp.route('/video_feed')
-def video_feed():
-    return Response(recognition_generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
