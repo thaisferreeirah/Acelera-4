@@ -7,6 +7,7 @@ from routes.auth import auth
 from routes.members import members
 from routes.students import students
 from routes.esp import esp
+from routes.recognitiontest import rectest
 
 app = Flask(__name__)
 
@@ -24,6 +25,7 @@ app.register_blueprint(auth)
 app.register_blueprint(members)
 app.register_blueprint(students)
 app.register_blueprint(esp)
+app.register_blueprint(rectest)
 
 websocketio.init_app(app)
 

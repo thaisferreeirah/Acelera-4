@@ -10,9 +10,9 @@ from routes.websocket import websocketio
 
 esp = Blueprint("esp", __name__)
 
-ESP32_WROOM_URL = "http://esp32wroom.local/activate" # URL do ESP32-WROOM
-ESP32_CAM_URL = "http://esp32cam.local:81/stream" # URL do ESP32-CAM
-FLASK_SERVER_URL = "http://192.168.197.89:5000/recognition"
+ESP32_WROOM_URL = "http://esp32wroom.local/activate"
+ESP32_CAM_URL = "http://esp32cam.local:81/stream"
+FLASK_SERVER_URL = "http://192.168.197.89:5000/"
 
 import time
 
@@ -48,11 +48,11 @@ def generate_frames():
             face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
 
             for face_encoding in face_encodings:
-                name = "Desconhecido"
-                for person_name, known_encoding in known_faces.items():
+                id = "Desconhecido"
+                for person_id, known_encoding in known_faces.items():
                     matches = face_recognition.compare_faces([known_encoding], face_encoding)
                     if True in matches:
-                        name = person_name
+                        id = person_id
                         break
 
                 # Verifica se já passou o tempo mínimo desde a última ativação
@@ -64,9 +64,24 @@ def generate_frames():
                 # Atualiza o tempo da última ativação
                 ultimo_reconhecimento = tempo_atual
 
-                if name != "Desconhecido":
-                    websocketio.emit('recognized_name', {"name": name})  # Enviar nome via WebSocket
-                    requests.get(ESP32_WROOM_URL)  # Ativar o motor
+                if id != "Desconhecido":
+                    response = requests.get(f"{FLASK_SERVER_URL}/membrosrectest/{id}")
+
+                    if response.status_code == 200:
+                        try:
+                            data = response.json()  # Converte a resposta para um dicionário
+                            name = data[0]["name"]  # Extrai o campo "name" corretamente
+                            websocketio.emit('recognized_name', {"name": name})  # Enviar nome via WebSocket
+
+                            dataLog = {"id": id}
+                            responseLog = requests.post(f"{FLASK_SERVER_URL}/reclogtest", data=dataLog)
+                            print(responseLog)
+                            #requests.get(ESP32_WROOM_URL)  # Ativar o motor
+                        except requests.exceptions.JSONDecodeError:
+                            print("Erro ao decodificar JSON. Resposta recebida:")
+                            print(response.text)
+                    else:
+                        print("Erro ao buscar o membro:", response.text)
 
 @websocketio.on('start_stream')
 def handle_start_stream():
