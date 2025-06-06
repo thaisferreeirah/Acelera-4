@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, redirect, url_for
 from models.user import db
 from models.student import Student
 from helpers import login_required
@@ -31,6 +31,6 @@ def student_signup():
     db.session.add(student)
     db.session.commit()
 
-    return "Aluno cadastrado com sucesso!", 201
+    return redirect(url_for("students.student"))
 
 # TODO: criar método para listar alunos cadastrados
