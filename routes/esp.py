@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, Response
+from flask import Blueprint, request, render_template
 import cv2
 import requests
 import base64
@@ -7,7 +7,6 @@ import face_recognition
 import os
 import time
 from routes.websocket import websocketio
-
 
 esp = Blueprint("esp", __name__)
 
@@ -39,7 +38,7 @@ def generate_frames():
 
         # Pula o processamento facial em alguns frames para melhorar a performance
         frame_count += 1
-        if reconhecimento_ativo and frame_count % 6 != 0:
+        if reconhecimento_ativo and frame_count % 10 != 0:
             continue  # Não faz o reconhecimento facial neste frame
 
         # Se reconhecimento estiver ativo, processar rostos
@@ -59,6 +58,7 @@ def generate_frames():
                 # Verifica se já passou o tempo mínimo desde a última ativação
                 tempo_atual = time.time()
                 if (tempo_atual - ultimo_reconhecimento) < COOLDOWN_TIME:
+                    websocketio.emit('recognized_name', {"name": "Desconhecido"})
                     continue  # Pula a ativação do motor e reconhecimento repetido
 
                 # Atualiza o tempo da última ativação
@@ -88,7 +88,7 @@ def handle_connect():
     print("Cliente conectado!")  # Isso deve aparecer no terminal do Flask
 
 @esp.route('/recognition', methods=['POST'])
-def face_recognition():
+def recognition():
     data = request.json  # Recebe dados JSON do ESP32-CAM
     if data and data.get("recognized") == True:
         person_name = data.get("name")
