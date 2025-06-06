@@ -48,7 +48,7 @@ def signup():
     db.session.add(user)
     db.session.commit()
 
-    return redirect(url_for(auth.signupg"))
+    return redirect(url_for(auth.signupg))
 
 @auth.route("/logout")
 @login_required

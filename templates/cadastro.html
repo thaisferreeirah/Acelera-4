@@ -6,7 +6,7 @@
     <title>Cadastro - Controle de Acesso Escolar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../static/style.css">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 
 <body>
@@ -39,7 +39,8 @@
         </div>           
                     <div class="face-recognition">
                         <div class="video-container">
-                            <video id="video" width="500" height="375" autoplay muted></video>
+                            <!-- <video id="video" width="500" height="375" autoplay muted></video> -->
+                            <img id="stream" />
                             <div class="canvas-container"></div>
                         </div>
                         
@@ -99,5 +100,25 @@
     </div>
     </main>
     <script src="js/script.js"></script>
+    <script>
+        var socket = io.connect('http://192.168.197.89:5000');
+        socket.on('stream_raw', function(frame) {
+            document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+        });
+
+        socket.on('connect', function() {
+            console.log("Conectado ao WebSocket!");
+            socket.emit('start_stream');  // Aqui o evento é disparado para o servidor
+        });
+
+        socket.on('stream', function(frame) {
+            console.log("Frame recebido!");  // Deve aparecer no console
+            document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+        });
+
+        socket.on('disconnect', function() {
+            console.log("WebSocket desconectado!");
+        });
+    </script>
 </body>
 </html>
