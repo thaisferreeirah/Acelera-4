@@ -76,7 +76,7 @@ def generate_frames():
                             dataLog = {"id": id}
                             responseLog = requests.post(f"{FLASK_SERVER_URL}/reclogtest", data=dataLog)
                             print(responseLog)
-                            #requests.get(ESP32_WROOM_URL)  # Ativar o motor
+                            requests.get(ESP32_WROOM_URL)  # Ativar o motor
                         except requests.exceptions.JSONDecodeError:
                             print("Erro ao decodificar JSON. Resposta recebida:")
                             print(response.text)
