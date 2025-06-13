@@ -62,7 +62,13 @@
             .then(data => {
                 const tabela = document.getElementById("accessHistoryTable");
                 data.forEach(usuario => {
-                    const linha = `<tr><td>${usuario.date}</td><td>${usuario.time}</td><td>${usuario.authorized_name}</td></tr>`;
+                    const linha = `<tr>
+                        <td>${usuario.date ?? ""}</td>
+                        <td>${usuario.time ?? ""}</td>
+                        <td>${usuario.authorized_name ?? ""}</td>
+                        <td>${usuario.method ?? ""}</td>
+                        <td>${usuario.description ?? ""}</td>
+                    </tr>`;
                     tabela.innerHTML += linha;
                 });
             })
@@ -92,9 +98,13 @@
             const tabela = document.getElementById("accessHistoryTable");
             const linhas = tabela.getElementsByTagName("tr");
 
+            // Exibe todas as linhas novamente
             for (let i = 0; i < linhas.length; i++) {
-                linhas[i].style.display = ""; // Exibe todas as linhas novamente
+                linhas[i].style.display = "";
             }
+
+            // Reseta o campo de data
+            document.getElementById("filterDate").value = "";
         }
     </script>
 </body>

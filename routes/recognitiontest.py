@@ -27,8 +27,9 @@ def reclogtest():
     auth_id = request.form.get("id")
     date = datetime.today().date()
     time = datetime.today().time().strftime("%H:%M:%S")  # Formata sem os decimais
+    method = "Reconhecimento Facial"
 
-    member = Recognition(authorized_id=auth_id, date=date, time=time)
+    member = Recognition(authorized_id=auth_id, date=date, time=time, method=method)
     db.session.add(member)
     db.session.commit()
 
@@ -46,7 +47,7 @@ def get_data_histrectest():
     conn = psycopg2.connect(database="meubanco", user="postgres", password="123", host="localhost", port="5432")
     cur = conn.cursor()
     cur.execute("""
-        SELECT a.authorized_name, r.date, r.time
+        SELECT a.authorized_name, r.date, r.time, r.method, r.description
         FROM authorized a
         JOIN recognition r ON a.authorized_id = r.authorized_id
         ORDER BY r.recognition_id DESC""")
@@ -55,7 +56,7 @@ def get_data_histrectest():
     conn.close()
 
     # Converte 'time' para string formatada
-    return [{"authorized_name": row[0], "date": row[1].strftime("%d/%m/%Y"), "time": row[2].strftime("%H:%M:%S")} for row in rows]
+    return [{"authorized_name": row[0], "date": row[1].strftime("%d/%m/%Y"), "time": row[2].strftime("%H:%M:%S"), "method": row[3], "description": row[4]} for row in rows]
 
 @rectest.route('/histrectest')
 def histrectest():
