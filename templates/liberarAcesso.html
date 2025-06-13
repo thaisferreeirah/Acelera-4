@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -64,9 +62,11 @@
       <table class="tabela">
         <thead>
           <tr>
+            <th>Data</th>
+            <th>Hora</th>
             <th>Nome</th>
-            <th>Motivo</th>
-            <th>Data/Hora</th>
+            <th>Método</th>
+            <th>Descrição</th>
           </tr>
         </thead>
         <tbody id="tabela-registros">
@@ -79,20 +79,24 @@
   <script>
     function abrirPortao() {
       alert("Portão aberto manualmente!");
-      // Aqui você poderia integrar com hardware ou API para abrir o portão fisicamente
+      // Requisição para abrir o portão
+      fetch("http://192.168.197.89:5000/open_gate");
       
+      // Registrar acesso no Banco de Dados
+      
+
       // Registrar a abertura do portão no histórico
-      const registro = {
-        nome: "Portão aberto manualmente",
-        descricao: "Abertura solicitada pelo operador",
-        dataHora: new Date().toLocaleString()
-      };
+      // const registro = {
+      //   nome: "Portão aberto manualmente",
+      //   descricao: "Abertura solicitada pelo operador",
+      //   dataHora: new Date().toLocaleString()
+      // };
       
-      let registros = JSON.parse(localStorage.getItem('registros')) || [];
-      registros.push(registro);
-      localStorage.setItem('registros', JSON.stringify(registros));
+      // let registros = JSON.parse(localStorage.getItem('registros')) || [];
+      // registros.push(registro);
+      // localStorage.setItem('registros', JSON.stringify(registros));
       
-      atualizarTabela();
+      // atualizarTabela();
     }
 
     function registrarEntrada() {

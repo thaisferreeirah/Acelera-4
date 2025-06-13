@@ -160,3 +160,9 @@ for filename in os.listdir(STATIC_FOLDER):
 
         except Exception as e:
             print(f"Erro ao processar {filename}: {e}")
+
+
+# Abrir portão manualmente
+@esp.route('/open_gate')
+def open_gate():
+    requests.get(ESP32_WROOM_URL)

@@ -61,3 +61,8 @@ def get_data_histrectest():
 @rectest.route('/histrectest')
 def histrectest():
     return jsonify(get_data_histrectest())
+
+
+@rectest.route('/libacestest')
+def libacestest():
+    return render_template('liberarAcesso.html')
