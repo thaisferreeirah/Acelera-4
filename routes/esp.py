@@ -17,7 +17,7 @@ FLASK_SERVER_URL = "http://192.168.197.89:5000/"
 import time
 
 ultimo_reconhecimento = 0  # Tempo da última ativação
-COOLDOWN_TIME = 7  # Tempo mínimo entre ativações (segundos)
+COOLDOWN_TIME = 3  # Tempo mínimo entre ativações (segundos)
 
 def generate_frames():
     cap = cv2.VideoCapture(ESP32_CAM_URL)
@@ -38,7 +38,7 @@ def generate_frames():
 
         # Pula o processamento facial em alguns frames para melhorar a performance
         frame_count += 1
-        if reconhecimento_ativo and frame_count % 10 != 0:
+        if reconhecimento_ativo and frame_count % 12 != 0:
             continue  # Não faz o reconhecimento facial neste frame
 
         # Se reconhecimento estiver ativo, processar rostos
@@ -58,7 +58,6 @@ def generate_frames():
                 # Verifica se já passou o tempo mínimo desde a última ativação
                 tempo_atual = time.time()
                 if (tempo_atual - ultimo_reconhecimento) < COOLDOWN_TIME:
-                    websocketio.emit('recognized_name', {"name": "Desconhecido"})
                     continue  # Pula a ativação do motor e reconhecimento repetido
 
                 # Atualiza o tempo da última ativação
@@ -76,7 +75,7 @@ def generate_frames():
                             dataLog = {"id": id}
                             responseLog = requests.post(f"{FLASK_SERVER_URL}/reclogtest", data=dataLog)
                             print(responseLog)
-                            requests.get(ESP32_WROOM_URL)  # Ativar o motor
+                            #requests.get(ESP32_WROOM_URL)  # Ativar o motor
                         except requests.exceptions.JSONDecodeError:
                             print("Erro ao decodificar JSON. Resposta recebida:")
                             print(response.text)

@@ -41,7 +41,7 @@
 </head>
 <body>
     <img id="stream">
-    <h2 id="recognized-name">Nenhum rosto reconhecido</h2>
+    <h2 id="recognized-name">Posicione o rosto no centro da câmera</h2>
 
     <script>
         var socket = io.connect('http://192.168.197.89:5000');
@@ -54,7 +54,15 @@
 
         // Exibir nome do rosto reconhecido
         socket.on('recognized_name', function(data) {
-            document.getElementById('recognized-name').innerText = "Reconhecido: " + data.name;
+            if (data.name === "Desconhecido") {
+                document.getElementById('recognized-name').innerText = "Rosto desconhecido";
+            } else {
+                // Define o tempo antes de apagar o nome (exemplo: 7 segundos)
+                setTimeout(() => {
+                    document.getElementById('recognized-name').innerText = "Posicione o rosto no centro da câmera";
+                }, 3000);
+                document.getElementById('recognized-name').innerText = "Bem vindo, " + data.name;
+            }
         });
     </script>
 </body>
