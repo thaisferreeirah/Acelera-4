@@ -19,6 +19,7 @@ import time
 ultimo_reconhecimento = 0  # Tempo da última ativação
 COOLDOWN_TIME = 3  # Tempo mínimo entre ativações (segundos)
 
+# Função para permitir exibir a captura do ESP32Cam em mais de uma página e para fazer o reconhecimento facial
 def generate_frames():
     cap = cv2.VideoCapture(ESP32_CAM_URL)
     global reconhecimento_ativo, ultimo_reconhecimento
@@ -82,25 +83,30 @@ def generate_frames():
                     else:
                         print("Erro ao buscar o membro:", response.text)
 
+# Inicia a transmissão
 @websocketio.on('start_stream')
 def handle_start_stream():
     print("Transmissão iniciada pelo cliente!")
     threading.Thread(target=generate_frames, daemon=True).start()
 
+# Habilita o reconhecimento facial
 @websocketio.on('enable_recognition')
 def enable_recognition():
     global reconhecimento_ativo
     reconhecimento_ativo = True
 
+# Desabilita o queconhecimento facial
 @websocketio.on('disable_recognition')
 def disable_recognition():
     global reconhecimento_ativo
     reconhecimento_ativo = False
 
+# Conecta
 @websocketio.on('connect')
 def handle_connect():
     print("Cliente conectado!")  # Isso deve aparecer no terminal do Flask
 
+# Acho que pode apagar, vou testar
 @esp.route('/recognition', methods=['POST'])
 def recognition():
     data = request.json  # Recebe dados JSON do ESP32-CAM
@@ -115,14 +121,17 @@ def recognition():
 
     return {"status": "no recognition"}, 400
 
+# Rota para a página takephoto.html
 @esp.route('/takephoto')
 def takephoto():
     return render_template('takephoto.html')
 
+# Rota para a página recognition.html
 @esp.route('/recognition_page')
 def recognition_page():
     return render_template('recognition.html')  # Novo nome do HTML
 
+# Salva a foto
 @esp.route('/save_photo', methods=['POST'])
 def save_photo():
     data = request.json
@@ -137,13 +146,11 @@ def save_photo():
 
     return {"mensagem": f"Imagem '{nome}.png' salva com sucesso!"}
 
-# Caminho da pasta onde estão as imagens
-STATIC_FOLDER = "./static"
 
-# Dicionário para armazenar as codificações faciais
-known_faces = {}
+STATIC_FOLDER = "./static" # Caminho da pasta onde estão as imagens
+known_faces = {} # Dicionário para armazenar as codificações faciais
 
-# Listar todos os arquivos da pasta static
+# Carrega todas as fotos da pasta static
 for filename in os.listdir(STATIC_FOLDER):
     if filename.endswith((".jpg", ".jpeg", ".png")):  # Filtrar apenas imagens
         person_name = os.path.splitext(filename)[0]  # Nome sem extensão

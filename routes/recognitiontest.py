@@ -4,10 +4,21 @@ from flask import Blueprint, request, render_template, jsonify
 from models.user import db
 from models.authorized_member import Authorized
 from models.recognition_event import Recognition
+import psycopg2
 
 from datetime import datetime
 
 rectest = Blueprint("recognitiontest", __name__)
+
+# Rota para a página liberarAcesso.html
+@rectest.route('/libacestest')
+def libacestest():
+    return render_template('liberarAcesso.html')
+
+# Rota para a página historico.html
+@rectest.route('/historicotest')
+def historicotest():
+    return render_template('historico.html')
 
 # Ver se o reconhecimento facial consegue buscar as informações do autorizado
 @rectest.route("/membrosrectest/<int:id>", methods=["GET"])
@@ -35,21 +46,14 @@ def reclogtest():
 
     return "Cadastrado com sucesso!", 201
 
-# Página do histórico de reconhecimento facial
-@rectest.route('/historicotest')
-def historicotest():
-    return render_template('historico.html')
-
-
-import psycopg2
 # Busca o histórico de reconhecimento facial no banco de dados
 def get_data_histrectest():
     conn = psycopg2.connect(database="meubanco", user="postgres", password="123", host="localhost", port="5432")
     cur = conn.cursor()
     cur.execute("""
         SELECT a.authorized_name, r.date, r.time, r.method, r.description
-        FROM authorized a
-        JOIN recognition r ON a.authorized_id = r.authorized_id
+        FROM recognition r
+        LEFT JOIN authorized a ON a.authorized_id = r.authorized_id
         ORDER BY r.recognition_id DESC""")
     
     rows = cur.fetchall()
@@ -62,7 +66,16 @@ def get_data_histrectest():
 def histrectest():
     return jsonify(get_data_histrectest())
 
+# Salva o acesso manual
+@rectest.route("/manuallogtest", methods=["POST"])
+def manuallogtest():
+    date = datetime.today().date()
+    time = datetime.today().time().strftime("%H:%M:%S")  # Formata sem os decimais
+    method = "Manual"
+    description = request.json.get("descricao")
 
-@rectest.route('/libacestest')
-def libacestest():
-    return render_template('liberarAcesso.html')
+    member = Recognition(date=date, time=time, method=method, description=description)
+    db.session.add(member)
+    db.session.commit()
+
+    return "Cadastrado com sucesso!", 201

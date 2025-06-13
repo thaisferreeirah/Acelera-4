@@ -83,7 +83,18 @@
       fetch("http://192.168.197.89:5000/open_gate");
       
       // Registrar acesso no Banco de Dados
-      
+      const descricao = document.getElementById("descricao").value;
+
+      fetch("http://192.168.197.89:5000/manuallogtest", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ descricao: descricao })
+      })
+      .then(response => response.text())
+      .then(data => alert("Resposta do servidor: " + data))
+      .catch(error => console.error("Erro ao enviar:", error));
 
       // Registrar a abertura do portão no histórico
       // const registro = {
