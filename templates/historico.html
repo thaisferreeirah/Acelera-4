@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,22 +9,23 @@
     <link rel="stylesheet" href="../static/style.css">
 
 </head>
+
 <body>
     <nav class="menu-superior">
-    <div class="logo-menu">
-        <i class="fas fa-school"></i>
-        <h2>Controle de Acesso</h2>
-    </div>
-    
-    <ul class="itens-menu">
-        <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="historico.html" class=""><i class="fas fa-history"></i> Histórico</a></li>
-        <li><a href="alunos.html"><i class="fas fa-users"></i> Alunos</a></li>
-        <li><a href="liberarAcesso.html"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
-        <li><a href="cadastro.html"><i class="fas fa-user-plus"></i>Funcionário</a></li>
-        <li><a href="cadastroUsuario.html"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
-        <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
-    </ul>
+        <div class="logo-menu">
+            <i class="fas fa-school"></i>
+            <h2>Controle de Acesso</h2>
+        </div>
+
+        <ul class="itens-menu">
+            <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="historico.html" class=""><i class="fas fa-history"></i> Histórico</a></li>
+            <li><a href="alunos.html"><i class="fas fa-users"></i> Alunos</a></li>
+            <li><a href="liberarAcesso.html"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
+            <li><a href="cadastro.html"><i class="fas fa-user-plus"></i>Funcionário</a></li>
+            <li><a href="cadastroUsuario.html"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
+            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+        </ul>
     </nav>
     <main class="main-content">
         <div class="card">
@@ -39,7 +41,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <table class="table">
                 <thead>
                     <tr>
@@ -57,22 +59,24 @@
 
     <!-- <script src="js/script.js"></script> -->
     <script>
-        fetch("http://192.168.197.89:5000/histrectest")
-            .then(response => response.json())
-            .then(data => {
-                const tabela = document.getElementById("accessHistoryTable");
-                data.forEach(usuario => {
-                    const linha = `<tr>
-                        <td>${usuario.date ?? ""}</td>
-                        <td>${usuario.time ?? ""}</td>
-                        <td>${usuario.authorized_name ?? ""}</td>
-                        <td>${usuario.method ?? ""}</td>
-                        <td>${usuario.description ?? ""}</td>
-                    </tr>`;
-                    tabela.innerHTML += linha;
-                });
-            })
-            .catch(error => console.error("Erro ao buscar dados:", error));
+        function carregarHistorico() {
+            fetch("{{ url_for('recognitiontest.histrectest') }}")
+                .then(response => response.json())
+                .then(data => {
+                    const tabela = document.getElementById("accessHistoryTable");
+                    data.forEach(usuario => {
+                        const linha = `<tr>
+                            <td>${usuario.date ?? ""}</td>
+                            <td>${usuario.time ?? ""}</td>
+                            <td>${usuario.authorized_name ?? ""}</td>
+                            <td>${usuario.method ?? ""}</td>
+                            <td>${usuario.description ?? ""}</td>
+                        </tr>`;
+                        tabela.innerHTML += linha;
+                    });
+                })
+                .catch(error => console.error("Erro ao buscar dados:", error));
+        }
 
         function filterByDate() {
             const selectedDate = document.getElementById("filterDate").value; // Formato YYYY-MM-DD
@@ -106,6 +110,9 @@
             // Reseta o campo de data
             document.getElementById("filterDate").value = "";
         }
+
+        carregarHistorico();
     </script>
 </body>
+
 </html>

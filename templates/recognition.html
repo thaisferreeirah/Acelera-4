@@ -44,7 +44,7 @@
     <h2 id="recognized-name">Posicione o rosto no centro da câmera</h2>
 
     <script>
-        var socket = io.connect('http://192.168.197.89:5000');
+        var socket = io.connect("{{ api_url }}");
         socket.emit('enable_recognition'); // Ativar reconhecimento facial nesta página
 
         // Atualizar vídeo normal

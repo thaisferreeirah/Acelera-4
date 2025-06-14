@@ -1,3 +1,4 @@
+import config
 from flask import Flask
 from db import db
 from routes.websocket import websocketio
@@ -30,4 +31,4 @@ app.register_blueprint(rectest)
 websocketio.init_app(app)
 
 if __name__ == "__main__":
-    websocketio.run(app, allow_unsafe_werkzeug=True, host="192.168.197.89", port=5000, debug=True)
+    websocketio.run(app, allow_unsafe_werkzeug=True, host=config.HOST, port=config.PORT, debug=True)

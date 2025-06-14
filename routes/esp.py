@@ -1,4 +1,5 @@
 from flask import Blueprint, request, render_template
+import config
 import cv2
 import requests
 import base64
@@ -12,7 +13,7 @@ esp = Blueprint("esp", __name__)
 
 ESP32_WROOM_URL = "http://esp32wroom.local/activate"
 ESP32_CAM_URL = "http://esp32cam.local:81/stream"
-FLASK_SERVER_URL = "http://192.168.197.89:5000/"
+FLASK_SERVER_URL = config.FLASK_URL
 
 import time
 

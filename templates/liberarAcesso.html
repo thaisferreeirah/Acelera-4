@@ -1,163 +1,211 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Acesso - Escola</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="../static/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Acesso - Escola</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../static/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
+
 <body>
     <nav class="menu-superior">
-    <div class="logo-menu">
-        <i class="fas fa-school"></i>
-        <h2>Controle de Acesso</h2>
-    </div>
-    
-    <ul class="itens-menu">
-        <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="historico.html" class=""><i class="fas fa-history"></i> Histórico</a></li>
-        <li><a href="alunos.html"><i class="fas fa-users"></i> Alunos</a></li>
-        <li><a href="liberarAcesso.html"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
-        <li><a href="cadastro.html"><i class="fas fa-user-plus"></i> Funcionário</a></li>
-        <li><a href="cadastroUsuario.html"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
-        <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
-    </ul>
+        <div class="logo-menu">
+            <i class="fas fa-school"></i>
+            <h2>Controle de Acesso</h2>
+        </div>
+
+        <ul class="itens-menu">
+            <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="historico.html" class=""><i class="fas fa-history"></i> Histórico</a></li>
+            <li><a href="alunos.html"><i class="fas fa-users"></i> Alunos</a></li>
+            <li><a href="liberarAcesso.html"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
+            <li><a href="cadastro.html"><i class="fas fa-user-plus"></i> Funcionário</a></li>
+            <li><a href="cadastroUsuario.html"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
+            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+        </ul>
     </nav>
 
-  <!-- Conteúdo Principal -->
-  <div class="conteudo-principal">
-    <div class="cartao">
-      <div class="cabecalho-cartao">
-        <h2><i class="fas fa-door-open"></i> Controle de Acesso Manual</h2>
-      </div>
-      
-      
-      <div class="grupo-formulario">
-        <button class="botao botao-primario" onclick="abrirPortao()">
-          <i class="fas fa-door-open"></i> Abrir Portão
-        </button>
-      </div>
-      
-      <h3><i class="fas fa-user-plus"></i> Registrar Entrada</h3>
-      
-      <div class="grupo-formulario">
-        <input type="text" id="nome" placeholder="Nome completo">
-      </div>
-      
-      <div class="grupo-formulario">
-        <textarea id="descricao" placeholder="Motivo da entrada"></textarea>
-      </div>
-      
-      <button class="botao botao-secundario" onclick="registrarEntrada()">
-        <i class="fas fa-save"></i> Registrar Entrada
-      </button>
+    <!-- Conteúdo Principal -->
+    <div class="conteudo-principal">
+        <div class="cartao">
+            <div class="cabecalho-cartao">
+                <h2><i class="fas fa-door-open"></i> Controle de Acesso Manual</h2>
+            </div>
+            
+            <img id="stream" />
+
+            <div class="grupo-formulario">
+                <button class="botao botao-primario" onclick="abrirPortao()">
+                    <i class="fas fa-door-open"></i> Abrir Portão
+                </button>
+            </div>
+
+            <h3><i class="fas fa-user-plus"></i> Registrar Entrada</h3>
+
+            <div class="grupo-formulario">
+                <input type="text" id="nome" placeholder="Nome completo">
+            </div>
+
+            <div class="grupo-formulario">
+                <textarea id="descricao" placeholder="Motivo da entrada"></textarea>
+            </div>
+
+            <button class="botao botao-secundario" onclick="registrarEntrada()">
+                <i class="fas fa-save"></i> Registrar Entrada
+            </button>
+        </div>
+
+        <div class="cartao">
+            <div class="cabecalho-cartao">
+                <h2><i class="fas fa-history"></i> Histórico de Acessos</h2>
+            </div>
+
+            <table class="tabela">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Nome</th>
+                        <th>Método</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-registros">
+                    <!-- Registros serão inseridos aqui pelo JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
-    
-    <div class="cartao">
-      <div class="cabecalho-cartao">
-        <h2><i class="fas fa-history"></i> Histórico de Acessos</h2>
-      </div>
-      
-      <table class="tabela">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Hora</th>
-            <th>Nome</th>
-            <th>Método</th>
-            <th>Descrição</th>
-          </tr>
-        </thead>
-        <tbody id="tabela-registros">
-          <!-- Registros serão inseridos aqui pelo JavaScript -->
-        </tbody>
-      </table>
-    </div>
-  </div>
 
-  <script>
-    function abrirPortao() {
-      alert("Portão aberto manualmente!");
-      // Requisição para abrir o portão
-      fetch("http://192.168.197.89:5000/open_gate");
-      
-      // Registrar acesso no Banco de Dados
-      const descricao = document.getElementById("descricao").value;
+    <script>
+        function abrirPortao() {
+            alert("Portão aberto manualmente!");
+            // Requisição para abrir o portão
+            fetch("{{ url_for('esp.open_gate') }}");
 
-      fetch("http://192.168.197.89:5000/manuallogtest", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ descricao: descricao })
-      })
-      .then(response => response.text())
-      .then(data => alert("Resposta do servidor: " + data))
-      .catch(error => console.error("Erro ao enviar:", error));
+            // Registrar acesso no Banco de Dados
+            const descricao = document.getElementById("descricao").value;
+            fetch("{{ url_for('recognitiontest.manuallogtest') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ descricao: descricao })
+            })
+                .then(response => response.text())
+                .then(data => alert("Resposta do servidor: " + data))
+                .catch(error => console.error("Erro ao enviar:", error));
 
-      // Registrar a abertura do portão no histórico
-      // const registro = {
-      //   nome: "Portão aberto manualmente",
-      //   descricao: "Abertura solicitada pelo operador",
-      //   dataHora: new Date().toLocaleString()
-      // };
-      
-      // let registros = JSON.parse(localStorage.getItem('registros')) || [];
-      // registros.push(registro);
-      // localStorage.setItem('registros', JSON.stringify(registros));
-      
-      // atualizarTabela();
-    }
+            // Registrar a abertura do portão no histórico
+            // const registro = {
+            //   nome: "Portão aberto manualmente",
+            //   descricao: "Abertura solicitada pelo operador",
+            //   dataHora: new Date().toLocaleString()
+            // };
 
-    function registrarEntrada() {
-      const nome = document.getElementById('nome').value.trim();
-      const descricao = document.getElementById('descricao').value.trim();
+            // let registros = JSON.parse(localStorage.getItem('registros')) || [];
+            // registros.push(registro);
+            // localStorage.setItem('registros', JSON.stringify(registros));
 
-      if (!nome || !descricao) {
-        alert("Preencha todos os campos!");
-        return;
-      }
+            // atualizarTabela();
+        }
 
-      const dataHora = new Date().toLocaleString();
+        function registrarEntrada() {
+            const nome = document.getElementById('nome').value.trim();
+            const descricao = document.getElementById('descricao').value.trim();
 
-      const registro = { nome, descricao, dataHora };
+            if (!nome || !descricao) {
+                alert("Preencha todos os campos!");
+                return;
+            }
 
-      let registros = JSON.parse(localStorage.getItem('registros')) || [];
-      registros.push(registro);
-      localStorage.setItem('registros', JSON.stringify(registros));
+            const dataHora = new Date().toLocaleString();
 
-      // Limpar campos
-      document.getElementById('nome').value = '';
-      document.getElementById('descricao').value = '';
-      
-      // Atualizar tabela
-      atualizarTabela();
-      
-      alert("Entrada registrada com sucesso!");
-    }
+            const registro = { nome, descricao, dataHora };
 
-    function atualizarTabela() {
-      const registros = JSON.parse(localStorage.getItem('registros')) || [];
-      const tbody = document.querySelector('#tabela-registros tbody');
-      tbody.innerHTML = '';
+            let registros = JSON.parse(localStorage.getItem('registros')) || [];
+            registros.push(registro);
+            localStorage.setItem('registros', JSON.stringify(registros));
 
-      // Ordenar registros do mais recente para o mais antigo
-      registros.sort((a, b) => new Date(b.dataHora) - new Date(a.dataHora));
-      
-      registros.forEach(reg => {
-        const linha = document.createElement('tr');
-        linha.innerHTML = `
+            // Limpar campos
+            document.getElementById('nome').value = '';
+            document.getElementById('descricao').value = '';
+
+            // Atualizar tabela
+            atualizarTabela();
+
+            alert("Entrada registrada com sucesso!");
+        }
+
+        function atualizarTabela() {
+            const registros = JSON.parse(localStorage.getItem('registros')) || [];
+            const tbody = document.querySelector('#tabela-registros tbody');
+            tbody.innerHTML = '';
+
+            // Ordenar registros do mais recente para o mais antigo
+            registros.sort((a, b) => new Date(b.dataHora) - new Date(a.dataHora));
+
+            registros.forEach(reg => {
+                const linha = document.createElement('tr');
+                linha.innerHTML = `
           <td>${reg.nome}</td>
           <td>${reg.descricao}</td>
           <td>${reg.dataHora}</td>
         `;
-        tbody.appendChild(linha);
-      });
-    }
+                tbody.appendChild(linha);
+            });
+        }
 
-    // Atualizar a tabela quando a página carrega
-    document.addEventListener('DOMContentLoaded', atualizarTabela);
-  </script>
+        function carregarHistorico() {
+            fetch("{{ url_for('recognitiontest.histrectest') }}")
+                .then(response => response.json())
+                .then(data => {
+                    const tabela = document.getElementById("tabela-registros");
+                    data.forEach(usuario => {
+                        const linha = `<tr>
+                            <td>${usuario.date ?? ""}</td>
+                            <td>${usuario.time ?? ""}</td>
+                            <td>${usuario.authorized_name ?? ""}</td>
+                            <td>${usuario.method ?? ""}</td>
+                            <td>${usuario.description ?? ""}</td>
+                        </tr>`;
+                        tabela.innerHTML += linha;
+                    });
+                })
+                .catch(error => console.error("Erro ao buscar dados:", error));
+        }
+
+        // Atualizar a tabela quando a página carrega
+        document.addEventListener('DOMContentLoaded', atualizarTabela);
+
+        carregarHistorico();
+    </script>
+
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        var socket = io.connect("{{ api_url }}");
+        socket.on('stream_raw', function (frame) {
+            document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+        });
+
+        socket.on('connect', function () {
+            console.log("Conectado ao WebSocket!");
+            socket.emit('start_stream');  // Aqui o evento é disparado para o servidor
+        });
+
+        socket.on('stream', function (frame) {
+            console.log("Frame recebido!");  // Deve aparecer no console
+            document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+        });
+
+        socket.on('disconnect', function () {
+            console.log("WebSocket desconectado!");
+        });
+    </script>
 </body>
+
 </html>
