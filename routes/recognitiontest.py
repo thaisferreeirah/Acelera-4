@@ -1,9 +1,10 @@
 # Para realizar testes sem precisar logar
 
-from flask import Blueprint, request, render_template, jsonify
+from flask import Blueprint, request, render_template, jsonify, url_for
 from models.user import db
 from models.authorized_member import Authorized
 from models.recognition_event import Recognition
+import os
 import psycopg2
 
 from datetime import datetime
@@ -79,3 +80,22 @@ def manuallogtest():
     db.session.commit()
 
     return "Cadastrado com sucesso!", 201
+
+# Busca os nomes e IDs dos autorizados
+@rectest.route('/get_authorized_name_id')
+def get_authorized_name_id():
+    members = Authorized.query.all()  # Obtém todos os registros da tabela
+    result = [{"id": member.authorized_id, "name": member.authorized_name} for member in members]
+    return jsonify(result)  # Retorna os dados em formato JSON
+
+# Busca a foto do autorizado pelo ID
+@rectest.route('/get_photo/<int:id>')
+def get_photo(id):
+    """Verifica qual extensão da imagem está disponível"""
+    formatos = ["jpg", "jpeg", "png"]
+    for ext in formatos:
+        caminho_arquivo = f"static/images/{id}.{ext}"
+        if os.path.exists(caminho_arquivo):
+            return jsonify({"foto": url_for('static', filename=f'images/{id}.{ext}')})
+
+    return jsonify({"foto": url_for('static', filename='images/default.jpg')})  # Foto padrão se não encontrar

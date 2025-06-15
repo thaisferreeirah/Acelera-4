@@ -8,6 +8,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../static/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        #stream {
+            width: 200px;
+            height: 200px;
+            object-fit: cover; /* Ajusta a imagem sem distorcer */
+            border: 1px solid #000000;
+            border-radius: 10px;
+        }
+        
+        #fotoPessoa {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border: 1px solid #000000;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -36,6 +53,7 @@
             </div>
             
             <img id="stream" />
+            <img id="fotoPessoa" src="static/images/default.jpg" alt="Foto do usuário">
 
             <div class="grupo-formulario">
                 <button class="botao botao-primario" onclick="abrirPortao()">
@@ -46,7 +64,12 @@
             <h3><i class="fas fa-user-plus"></i> Registrar Entrada</h3>
 
             <div class="grupo-formulario">
-                <input type="text" id="nome" placeholder="Nome completo">
+                <!-- <input type="text" id="nome" placeholder="Nome completo"> -->
+                <input list="nameList" id="searchBox" placeholder="Digite ou selecione um nome">
+                <datalist id="nameList"></datalist>
+
+                <input list="idList" id="idBox" placeholder="Digite ou selecione um ID">
+                <datalist id="idList"></datalist>
             </div>
 
             <div class="grupo-formulario">
@@ -55,6 +78,9 @@
 
             <button class="botao botao-secundario" onclick="registrarEntrada()">
                 <i class="fas fa-save"></i> Registrar Entrada
+            </button>
+            <button class="botao botao-secundario" onclick="limparCampos()">
+                <i class="fas"></i> Limpar
             </button>
         </div>
 
@@ -73,19 +99,74 @@
                         <th>Descrição</th>
                     </tr>
                 </thead>
-                <tbody id="tabela-registros">
-                    <!-- Registros serão inseridos aqui pelo JavaScript -->
-                </tbody>
+                <tbody id="tabela-registros"></tbody>
             </table>
         </div>
     </div>
+
+    <script>
+        fetch("/get_authorized_name_id") // Faz a requisição à API Flask
+            .then(response => response.json())
+            .then(data => {
+                let nameList = document.getElementById("nameList");
+                let idList = document.getElementById("idList");
+
+                data.forEach(member => {
+                    let nameOption = document.createElement("option");
+                    nameOption.value = member.name;
+                    nameOption.dataset.id = member.id; // Guardamos o ID no atributo `data-id`
+                    nameList.appendChild(nameOption);
+
+                    let idOption = document.createElement("option");
+                    idOption.value = member.id;
+                    idOption.dataset.name = member.name; // Guardamos o nome no atributo `data-name`
+                    idList.appendChild(idOption);
+                });
+            });
+
+        document.getElementById("searchBox").addEventListener("input", function() {
+            let selectedOption = [...document.getElementById("nameList").options].find(
+                option => option.value.toLowerCase() === this.value.toLowerCase()
+            );
+            document.getElementById("idBox").value = selectedOption ? selectedOption.dataset.id : "";
+        });
+
+        document.getElementById("idBox").addEventListener("input", function() {
+            let selectedOption = [...document.getElementById("idList").options].find(
+                option => option.value === this.value
+            );
+            document.getElementById("searchBox").value = selectedOption ? selectedOption.dataset.name : "";
+        });
+
+        function buscarFoto(id) {
+            fetch(`/get_photo/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("fotoPessoa").src = data.foto;
+                });
+        }
+
+        // Atualiza a foto ao selecionar um nome
+        document.getElementById("searchBox").addEventListener("input", function() {
+            let selectedOption = [...document.getElementById("nameList").options].find(option => option.value === this.value);
+            if (selectedOption) buscarFoto(selectedOption.dataset.id);
+        });
+
+        // Atualiza a foto ao selecionar um ID
+        document.getElementById("idBox").addEventListener("input", function() {
+            let selectedOption = [...document.getElementById("idList").options].find(option => option.value === this.value);
+            if (selectedOption) buscarFoto(selectedOption.value);
+        });
+    </script>
 
     <script>
         function abrirPortao() {
             alert("Portão aberto manualmente!");
             // Requisição para abrir o portão
             fetch("{{ url_for('esp.open_gate') }}");
+        }
 
+        function registrarEntrada() {
             // Registrar acesso no Banco de Dados
             const descricao = document.getElementById("descricao").value;
             fetch("{{ url_for('recognitiontest.manuallogtest') }}", {
@@ -99,43 +180,28 @@
                 .then(data => alert("Resposta do servidor: " + data))
                 .catch(error => console.error("Erro ao enviar:", error));
 
-            // Registrar a abertura do portão no histórico
-            // const registro = {
-            //   nome: "Portão aberto manualmente",
-            //   descricao: "Abertura solicitada pelo operador",
-            //   dataHora: new Date().toLocaleString()
-            // };
+            // const nome = document.getElementById('nome').value.trim();
+            // const descricao = document.getElementById('descricao').value.trim();
+
+            // if (!nome || !descricao) {
+            //     alert("Preencha todos os campos!");
+            //     return;
+            // }
+
+            // const dataHora = new Date().toLocaleString();
+
+            // const registro = { nome, descricao, dataHora };
 
             // let registros = JSON.parse(localStorage.getItem('registros')) || [];
             // registros.push(registro);
             // localStorage.setItem('registros', JSON.stringify(registros));
 
+            // // Limpar campos
+            // document.getElementById('nome').value = '';
+            // document.getElementById('descricao').value = '';
+
+            // // Atualizar tabela
             // atualizarTabela();
-        }
-
-        function registrarEntrada() {
-            const nome = document.getElementById('nome').value.trim();
-            const descricao = document.getElementById('descricao').value.trim();
-
-            if (!nome || !descricao) {
-                alert("Preencha todos os campos!");
-                return;
-            }
-
-            const dataHora = new Date().toLocaleString();
-
-            const registro = { nome, descricao, dataHora };
-
-            let registros = JSON.parse(localStorage.getItem('registros')) || [];
-            registros.push(registro);
-            localStorage.setItem('registros', JSON.stringify(registros));
-
-            // Limpar campos
-            document.getElementById('nome').value = '';
-            document.getElementById('descricao').value = '';
-
-            // Atualizar tabela
-            atualizarTabela();
 
             alert("Entrada registrada com sucesso!");
         }
@@ -176,6 +242,13 @@
                     });
                 })
                 .catch(error => console.error("Erro ao buscar dados:", error));
+        }
+
+        function limparCampos() {
+            document.getElementById("searchBox").value = "";
+            document.getElementById("idBox").value = "";
+            document.getElementById("descricao").value = "";
+            document.getElementById("fotoPessoa").src = "static/images/default.jpg";
         }
 
         // Atualizar a tabela quando a página carrega

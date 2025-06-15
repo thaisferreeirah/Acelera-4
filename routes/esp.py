@@ -142,7 +142,7 @@ def save_photo():
     img_data = base64.b64decode(data['imagem'].split(',')[1])
 
     # Salvar com o nome fornecido
-    with open(f"static/{nome}.png", "wb") as f:
+    with open(f"static/images/{nome}.png", "wb") as f:
         f.write(img_data)
 
     return {"mensagem": f"Imagem '{nome}.png' salva com sucesso!"}
