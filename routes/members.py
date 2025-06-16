@@ -1,13 +1,18 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template, redirect, url_for
 from models.user import db
 from models.authorized_member import Authorized
 from helpers import login_required
 
 members = Blueprint("members", __name__)
 
+@members.route("/autorizado")
+#@login_required
+def members_page():
+    return render_template("cadastro.html")
+
 # Rotas parar membros autorizados
 @members.route("/membros", methods=["GET"])
-@login_required
+#@login_required
 def get_members():
     authorized_members = Authorized.query.all()
 
@@ -20,16 +25,18 @@ def get_members():
             "id": member.authorized_id,
             "name": member.authorized_name,
             "cpf": member.cpf,
-            "photo": member.photo
+            "photo": member.photo,
+            "position": member.position
         })            
     
     return members_list
 
 @members.route("/membros", methods=["POST"])
-@login_required
+#@login_required
 def auth_member_signup():
     auth_name = request.form.get("name")
     cpf = request.form.get("cpf")
+    position = request.form.get("position")
     photo = request.form.get("photo")
 
     if len(cpf) != 11:
@@ -39,14 +46,14 @@ def auth_member_signup():
     if Authorized.query.filter(Authorized.cpf == cpf).first():
         return "CPF já cadastrado em outro membro autorizado!", 409
 
-    member = Authorized(authorized_name=auth_name, cpf=cpf, photo=photo)
+    member = Authorized(authorized_name=auth_name, cpf=cpf, position=position, photo=photo)
     db.session.add(member)
     db.session.commit()
 
-    return "Cadastrado com sucesso!", 201
+    return redirect(url_for("members.members_page"))
 
 @members.route("/membros/<int:id>", methods=["GET"])
-@login_required
+#@login_required
 def get_member(id):
     member = Authorized.query.get(id)
 
@@ -61,7 +68,7 @@ def get_member(id):
     return "Membro não encontrado!", 404
 
 @members.route("/membros/update/<int:id>", methods=["POST"])
-@login_required
+#@login_required
 def update_member(id):
     member = Authorized.query.get(id)
 
@@ -97,7 +104,7 @@ def update_member(id):
         }]
 
 @members.route("/membros/delete/<int:id>", methods=["POST"])
-@login_required
+#@login_required
 def delete_member(id):
     member = Authorized.query.get(id)
 

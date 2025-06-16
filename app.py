@@ -1,3 +1,4 @@
+import config
 from flask import Flask
 from db import db
 from routes.websocket import websocketio
@@ -7,6 +8,7 @@ from routes.auth import auth
 from routes.members import members
 from routes.students import students
 from routes.esp import esp
+from routes.recognitiontest import rectest
 
 app = Flask(__name__)
 
@@ -24,10 +26,9 @@ app.register_blueprint(auth)
 app.register_blueprint(members)
 app.register_blueprint(students)
 app.register_blueprint(esp)
+app.register_blueprint(rectest)
 
 websocketio.init_app(app)
 
 if __name__ == "__main__":
-    #app.run(host="192.168.83.89", port=5000, debug=True)
-    #app.run(host="0.0.0.0", port=5000, debug=True)
-    websocketio.run(app, host="192.168.197.89", port=5000, debug=True)
+    websocketio.run(app, allow_unsafe_werkzeug=True, host=config.HOST, port=config.PORT, debug=True)

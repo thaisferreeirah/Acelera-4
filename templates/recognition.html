@@ -36,12 +36,34 @@
             font-size: 14px;
             color: #bbb;
         }
-    </style> 
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Transmissão do Reconhecimento Facial</h1>
-        <img src="{{ url_for('esp.video_feed') }}" width="640" height="480" class="video-frame">
-    </div>
+    <img id="stream">
+    <h2 id="recognized-name">Posicione o rosto no centro da câmera</h2>
+
+    <script>
+        var socket = io.connect("{{ api_url }}");
+        socket.emit('enable_recognition'); // Ativar reconhecimento facial nesta página
+
+        // Atualizar vídeo normal
+        socket.on('stream_raw', function(frame) {
+            document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+        });
+
+        // Exibir nome do rosto reconhecido
+        socket.on('recognized_name', function(data) {
+            if (data.name === "Desconhecido") {
+                document.getElementById('recognized-name').innerText = "Rosto desconhecido";
+            } else {
+                // Define o tempo antes de apagar o nome (exemplo: 7 segundos)
+                setTimeout(() => {
+                    document.getElementById('recognized-name').innerText = "Posicione o rosto no centro da câmera";
+                }, 3000);
+                document.getElementById('recognized-name').innerText = "Bem vindo, " + data.name;
+            }
+        });
+    </script>
 </body>
 </html>

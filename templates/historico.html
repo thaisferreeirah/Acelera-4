@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,56 +9,110 @@
     <link rel="stylesheet" href="../static/style.css">
 
 </head>
+
 <body>
     <nav class="menu-superior">
-    <div class="logo-menu">
-        <i class="fas fa-school"></i>
-        <h2>Controle de Acesso</h2>
-    </div>
-    
-    <ul class="itens-menu">
-        <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
-        <li><a href="historico.html" class=""><i class="fas fa-history"></i> Histórico</a></li>
-        <li><a href="alunos.html"><i class="fas fa-users"></i> Alunos</a></li>
-        <li><a href="liberarAcesso.html"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
-        <li><a href="cadastro.html"><i class="fas fa-user-plus"></i> Cadastro Funcionário</a></li>
-        <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
-    </ul>
-    </nav>
-        
-        <main class="main-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="fas fa-history"></i> Histórico de Acessos</h2>
-                    <div>
-                        <input type="date" id="filterDate" class="form-control" style="display: inline-block; width: auto;">
-                        <button class="btn btn-secondary" onclick="filterByDate()">
-                            <i class="fas fa-filter"></i> Filtrar
-                        </button>
-                        <button class="btn btn-primary" onclick="resetFilter()">
-                            <i class="fas fa-sync-alt"></i> Limpar
-                        </button>
-                    </div>
-                </div>
-                
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Data/Hora</th>
-                            <th>Nome</th>
-                            <th>Descrição</th>
-                            <th>Tipo</th>
-                            <th>Método</th>
-                        </tr>
-                    </thead>
-                    <tbody id="accessHistoryTable">
-                        <!-- Preenchido por JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </main>
-    </div>
+        <div class="logo-menu">
+            <i class="fas fa-school"></i>
+            <h2>Controle de Acesso</h2>
+        </div>
 
-    <script src="js/script.js"></script>
+        <ul class="itens-menu">
+            <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="historico.html" class=""><i class="fas fa-history"></i> Histórico</a></li>
+            <li><a href="alunos.html"><i class="fas fa-users"></i> Alunos</a></li>
+            <li><a href="liberarAcesso.html"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
+            <li><a href="cadastro.html"><i class="fas fa-user-plus"></i>Funcionário</a></li>
+            <li><a href="cadastroUsuario.html"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
+            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+        </ul>
+    </nav>
+    <main class="main-content">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-history"></i> Histórico de Acessos</h2>
+                <div>
+                    <input type="date" id="filterDate" class="form-control" style="display: inline-block; width: auto;">
+                    <button class="btn btn-secondary" onclick="filterByDate()">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                    <button class="btn btn-primary" onclick="resetFilter()">
+                        <i class="fas fa-sync-alt"></i> Limpar
+                    </button>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Nome</th>
+                        <th>Método</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody id="accessHistoryTable"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- <script src="js/script.js"></script> -->
+    <script>
+        function carregarHistorico() {
+            fetch("{{ url_for('recognitiontest.histrectest') }}")
+                .then(response => response.json())
+                .then(data => {
+                    const tabela = document.getElementById("accessHistoryTable");
+                    data.forEach(usuario => {
+                        const linha = `<tr>
+                            <td>${usuario.date ?? ""}</td>
+                            <td>${usuario.time ?? ""}</td>
+                            <td>${usuario.authorized_name ?? ""}</td>
+                            <td>${usuario.method ?? ""}</td>
+                            <td>${usuario.description ?? ""}</td>
+                        </tr>`;
+                        tabela.innerHTML += linha;
+                    });
+                })
+                .catch(error => console.error("Erro ao buscar dados:", error));
+        }
+
+        function filterByDate() {
+            const selectedDate = document.getElementById("filterDate").value; // Formato YYYY-MM-DD
+            const formattedDate = selectedDate.split("-").reverse().join("/"); // Converte para DD/MM/YYYY
+
+            const tabela = document.getElementById("accessHistoryTable");
+            const linhas = tabela.getElementsByTagName("tr");
+
+            for (let i = 0; i < linhas.length; i++) {
+                const colunaData = linhas[i].getElementsByTagName("td")[0]; // Obtém a célula da data
+                if (colunaData) {
+                    const dataLinha = colunaData.textContent.trim(); // Data da linha da tabela
+                    if (dataLinha === formattedDate) {
+                        linhas[i].style.display = ""; // Mostra a linha
+                    } else {
+                        linhas[i].style.display = "none"; // Oculta a linha
+                    }
+                }
+            }
+        }
+
+        function resetFilter() {
+            const tabela = document.getElementById("accessHistoryTable");
+            const linhas = tabela.getElementsByTagName("tr");
+
+            // Exibe todas as linhas novamente
+            for (let i = 0; i < linhas.length; i++) {
+                linhas[i].style.display = "";
+            }
+
+            // Reseta o campo de data
+            document.getElementById("filterDate").value = "";
+        }
+
+        carregarHistorico();
+    </script>
 </body>
+
 </html>

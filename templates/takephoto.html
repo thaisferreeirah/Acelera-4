@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <title>Captura ESP32-CAM</title>
@@ -9,9 +10,11 @@
             text-align: center;
             background-color: #f4f4f4;
         }
+
         h1 {
             color: #333;
         }
+
         .container {
             background: white;
             padding: 20px;
@@ -19,16 +22,20 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             display: inline-block;
         }
+
         #video {
             width: 80%;
             border: 2px solid #333;
             margin-bottom: 10px;
         }
-        input, button {
+
+        input,
+        button {
             padding: 10px;
             margin-top: 10px;
             font-size: 16px;
         }
+
         .success {
             color: green;
             font-weight: bold;
@@ -36,6 +43,7 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
+
 <body>
     <h1>Transmissão do ESP32-CAM</h1>
     <div class="container">
@@ -54,42 +62,44 @@
     <canvas id="canvas" style="display:none;"></canvas>
 
     <script>
-        //var socket = io.connect('http://192.168.83.89:5000/'); // IP do Flask
-        var socket = io.connect('http://192.168.197.89:5000/');
+        var socket = io.connect("{{ api_url }}");
+        socket.on('stream_raw', function (frame) {
+            document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+        });
 
-        socket.on('connect', function() {
+        socket.on('connect', function () {
             console.log("Conectado ao WebSocket!");
             socket.emit('start_stream');  // Aqui o evento é disparado para o servidor
         });
 
-        socket.on('stream', function(frame) {
+        socket.on('stream', function (frame) {
             console.log("Frame recebido!");  // Deve aparecer no console
             document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
         });
 
-        socket.on('disconnect', function() {
+        socket.on('disconnect', function () {
             console.log("WebSocket desconectado!");
         });
     </script>
 
     <script>
-        document.getElementById("capture").addEventListener("click", function() {
+        document.getElementById("capture").addEventListener("click", function () {
             let video = document.getElementById("stream");
             let canvas = document.getElementById("canvas");
             let ctx = canvas.getContext("2d");
             let enteredName = document.getElementById("name").value.trim();
-            
+
             if (!enteredName) {
                 alert("Por favor, insira um nome antes de capturar a imagem.");
                 return;
             }
-            
+
             canvas.width = video.width;
             canvas.height = video.height;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
             let imgData = canvas.toDataURL("image/png"); // Obtém imagem base64
-            
+
             // Enviar para o servidor Flask
             fetch("/save_photo", {
                 method: "POST",
@@ -101,4 +111,5 @@
         });
     </script>
 </body>
+
 </html>
