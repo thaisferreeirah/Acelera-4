@@ -18,7 +18,6 @@ def student_signup():
     name = request.form.get("name")
     school_class = request.form.get("class")
     
-
     if not id:
         return "Insira o id do aluno!", 400
     
