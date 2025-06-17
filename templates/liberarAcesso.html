@@ -167,62 +167,34 @@
         }
 
         function registrarEntrada() {
+            const id = document.getElementById("idBox").value.trim();
+            const descricao = document.getElementById('descricao').value.trim();
+
+            if (!id) {
+                alert("Preencha o nome e o ID.");
+                return;
+            }
+
             // Registrar acesso no Banco de Dados
-            const descricao = document.getElementById("descricao").value;
             fetch("{{ url_for('recognitiontest.manuallogtest') }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ descricao: descricao })
+                body: JSON.stringify({ 
+                    id: id,
+                    descricao: descricao })
             })
                 .then(response => response.text())
                 .then(data => alert("Resposta do servidor: " + data))
                 .catch(error => console.error("Erro ao enviar:", error));
 
-            // const nome = document.getElementById('nome').value.trim();
-            // const descricao = document.getElementById('descricao').value.trim();
+            // Limpar campos
+            document.getElementById('searchBox').value = '';
+            document.getElementById('idBox').value = '';
+            document.getElementById('descricao').value = '';;
 
-            // if (!nome || !descricao) {
-            //     alert("Preencha todos os campos!");
-            //     return;
-            // }
-
-            // const dataHora = new Date().toLocaleString();
-
-            // const registro = { nome, descricao, dataHora };
-
-            // let registros = JSON.parse(localStorage.getItem('registros')) || [];
-            // registros.push(registro);
-            // localStorage.setItem('registros', JSON.stringify(registros));
-
-            // // Limpar campos
-            // document.getElementById('nome').value = '';
-            // document.getElementById('descricao').value = '';
-
-            // // Atualizar tabela
-            // atualizarTabela();
-
-            alert("Entrada registrada com sucesso!");
-        }
-
-        function atualizarTabela() {
-            const registros = JSON.parse(localStorage.getItem('registros')) || [];
-            const tbody = document.querySelector('#tabela-registros tbody');
-            tbody.innerHTML = '';
-
-            // Ordenar registros do mais recente para o mais antigo
-            registros.sort((a, b) => new Date(b.dataHora) - new Date(a.dataHora));
-
-            registros.forEach(reg => {
-                const linha = document.createElement('tr');
-                linha.innerHTML = `
-          <td>${reg.nome}</td>
-          <td>${reg.descricao}</td>
-          <td>${reg.dataHora}</td>
-        `;
-                tbody.appendChild(linha);
-            });
+            carregarHistorico();
         }
 
         function carregarHistorico() {
@@ -230,6 +202,7 @@
                 .then(response => response.json())
                 .then(data => {
                     const tabela = document.getElementById("tabela-registros");
+                    tabela.innerHTML = ""; // Remove todo o conteúdo da tabela
                     data.forEach(usuario => {
                         const linha = `<tr>
                             <td>${usuario.date ?? ""}</td>

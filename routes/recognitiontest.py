@@ -73,9 +73,10 @@ def manuallogtest():
     date = datetime.today().date()
     time = datetime.today().time().strftime("%H:%M:%S")  # Formata sem os decimais
     method = "Manual"
+    authorized_id = request.json.get("id")
     description = request.json.get("descricao")
 
-    member = Recognition(date=date, time=time, method=method, description=description)
+    member = Recognition(authorized_id=authorized_id, date=date, time=time, method=method, description=description)
     db.session.add(member)
     db.session.commit()
 
