@@ -142,20 +142,31 @@
             fetch(`/get_photo/${id}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("fotoPessoa").src = data.foto;
+                    document.getElementById("fotoPessoa").src = data.foto ? data.foto : "default.jpg";
+                })
+                .catch(() => {
+                    document.getElementById("fotoPessoa").src = "/static/images/default.jpg";
                 });
         }
 
         // Atualiza a foto ao selecionar um nome
         document.getElementById("searchBox").addEventListener("input", function() {
             let selectedOption = [...document.getElementById("nameList").options].find(option => option.value === this.value);
-            if (selectedOption) buscarFoto(selectedOption.dataset.id);
+            if (selectedOption) {
+                buscarFoto(selectedOption.dataset.id);
+            } else {
+                document.getElementById("fotoPessoa").src = "/static/images/default.jpg";
+            }
         });
 
         // Atualiza a foto ao selecionar um ID
         document.getElementById("idBox").addEventListener("input", function() {
             let selectedOption = [...document.getElementById("idList").options].find(option => option.value === this.value);
-            if (selectedOption) buscarFoto(selectedOption.value);
+            if (selectedOption) {
+                buscarFoto(selectedOption.value);
+            } else {
+                document.getElementById("fotoPessoa").src = "/static/images/default.jpg";
+            }
         });
     </script>
 
@@ -168,9 +179,10 @@
 
         function registrarEntrada() {
             const id = document.getElementById("idBox").value.trim();
+            const nome = document.getElementById("searchBox").value.trim();
             const descricao = document.getElementById('descricao').value.trim();
 
-            if (!id) {
+            if (!id || !nome) {
                 alert("Preencha o nome e o ID.");
                 return;
             }
@@ -189,10 +201,7 @@
                 .then(data => alert("Resposta do servidor: " + data))
                 .catch(error => console.error("Erro ao enviar:", error));
 
-            // Limpar campos
-            document.getElementById('searchBox').value = '';
-            document.getElementById('idBox').value = '';
-            document.getElementById('descricao').value = '';;
+            limparCampos();
 
             carregarHistorico();
         }
@@ -225,9 +234,7 @@
         }
 
         // Atualizar a tabela quando a página carrega
-        document.addEventListener('DOMContentLoaded', atualizarTabela);
-
-        carregarHistorico();
+        document.addEventListener('DOMContentLoaded', carregarHistorico);
     </script>
 
     <canvas id="canvas" style="display:none;"></canvas>

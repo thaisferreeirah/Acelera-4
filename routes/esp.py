@@ -148,7 +148,7 @@ def save_photo():
     return {"mensagem": f"Imagem '{nome}.png' salva com sucesso!"}
 
 
-STATIC_FOLDER = "./static" # Caminho da pasta onde estão as imagens
+STATIC_FOLDER = "./static/images" # Caminho da pasta onde estão as imagens
 known_faces = {} # Dicionário para armazenar as codificações faciais
 
 # Carrega todas as fotos da pasta static
