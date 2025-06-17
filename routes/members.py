@@ -2,6 +2,7 @@ from flask import Blueprint, request, render_template, redirect, url_for
 from models.user import db
 from models.authorized_member import Authorized
 from helpers import login_required
+from base64 import b64decode
 
 members = Blueprint("members", __name__)
 
@@ -37,7 +38,7 @@ def auth_member_signup():
     auth_name = request.form.get("name")
     cpf = request.form.get("cpf")
     position = request.form.get("position")
-    photo = request.form.get("photo")
+    photo = request.json
 
     if len(cpf) != 11:
         print(len(cpf))
@@ -45,10 +46,17 @@ def auth_member_signup():
     
     if Authorized.query.filter(Authorized.cpf == cpf).first():
         return "CPF já cadastrado em outro membro autorizado!", 409
+    
+    # Remover cabeçalho do base64 e converter para binário
+    img_data = b64decode(photo['imagem'].split(',')[1])
 
-    member = Authorized(authorized_name=auth_name, cpf=cpf, position=position, photo=photo)
+    member = Authorized(authorized_name=auth_name, cpf=cpf, position=position)
     db.session.add(member)
     db.session.commit()
+
+    # Salvar com o nome fornecido
+    with open(f"static/images/{member.authorized_id}.png", "wb") as f:
+        f.write(img_data)
 
     return redirect(url_for("members.members_page"))
 
