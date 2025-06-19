@@ -41,7 +41,7 @@ def generate_frames():
         # Pula o processamento facial em alguns frames para melhorar a performance
         frame_count += 1
         if reconhecimento_ativo and frame_count % 12 != 0:
-            continue  # Não faz o reconhecimento facial neste frame
+            continue
 
         # Se reconhecimento estiver ativo, processar rostos
         if reconhecimento_ativo:
