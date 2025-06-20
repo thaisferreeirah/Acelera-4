@@ -11,12 +11,9 @@
 </head>
 
 <body>
-    <nav class="menu-superior">
-        <div class="logo-menu">
-            <i class="fas fa-school"></i>
-            <h2>Controle de Acesso</h2>
-        </div>
+    <div id="menu-container"></div>
 
+<<<<<<< HEAD
         <ul class="itens-menu">
             <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
             <li><a href="/historico" class="ativo"><i class="fas fa-history"></i> Histórico</a></li>
@@ -28,15 +25,16 @@
             <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
         </ul>
     </nav>
+=======
+>>>>>>> 48489c646ec5e19060213ba7d91b465d1facdfe4
     <main class="main-content">
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-history"></i> Histórico de Acessos</h2>
                 <div>
+                    <h3 style="display: inline-block; width: auto; margin-right: 10px;">Filtro</h3>
+                    <input type="text" id="filterName" placeholder="Nome" style="display: inline-block; width: auto;">
                     <input type="date" id="filterDate" class="form-control" style="display: inline-block; width: auto;">
-                    <button class="btn btn-secondary" onclick="filterByDate()">
-                        <i class="fas fa-filter"></i> Filtrar
-                    </button>
                     <button class="btn btn-primary" onclick="resetFilter()">
                         <i class="fas fa-sync-alt"></i> Limpar
                     </button>
@@ -58,7 +56,6 @@
         </div>
     </main>
 
-    <!-- <script src="js/script.js"></script> -->
     <script>
         function carregarHistorico() {
             fetch("{{ url_for('recognitiontest.histrectest') }}")
@@ -79,23 +76,30 @@
                 .catch(error => console.error("Erro ao buscar dados:", error));
         }
 
-        function filterByDate() {
-            const selectedDate = document.getElementById("filterDate").value; // Formato YYYY-MM-DD
-            const formattedDate = selectedDate.split("-").reverse().join("/"); // Converte para DD/MM/YYYY
+        function aplicarFiltro() {
+            const nomeFiltro = document.getElementById("filterName").value.toLowerCase();
+            const dataFiltro = document.getElementById("filterDate").value;
 
-            const tabela = document.getElementById("accessHistoryTable");
-            const linhas = tabela.getElementsByTagName("tr");
+            const formattedDataFiltro = dataFiltro
+                ? dataFiltro.split("-").reverse().join("/")
+                : "";
+
+            const linhas = document
+                .getElementById("accessHistoryTable")
+                .getElementsByTagName("tr");
 
             for (let i = 0; i < linhas.length; i++) {
-                const colunaData = linhas[i].getElementsByTagName("td")[0]; // Obtém a célula da data
-                if (colunaData) {
-                    const dataLinha = colunaData.textContent.trim(); // Data da linha da tabela
-                    if (dataLinha === formattedDate) {
-                        linhas[i].style.display = ""; // Mostra a linha
-                    } else {
-                        linhas[i].style.display = "none"; // Oculta a linha
-                    }
-                }
+                const colunas = linhas[i].getElementsByTagName("td");
+
+                const dataLinha = colunas[0].textContent.trim();
+                const nomeLinha = colunas[2].textContent.trim().toLowerCase();
+
+                const correspondeNome = nomeLinha.includes(nomeFiltro);
+                const correspondeData =
+                    !formattedDataFiltro || dataLinha === formattedDataFiltro;
+
+                linhas[i].style.display =
+                    correspondeNome && correspondeData ? "" : "none";
             }
         }
 
@@ -103,17 +107,20 @@
             const tabela = document.getElementById("accessHistoryTable");
             const linhas = tabela.getElementsByTagName("tr");
 
-            // Exibe todas as linhas novamente
             for (let i = 0; i < linhas.length; i++) {
                 linhas[i].style.display = "";
             }
 
-            // Reseta o campo de data
             document.getElementById("filterDate").value = "";
+            document.getElementById("filterName").value = "";
         }
 
         carregarHistorico();
+
+        document.getElementById("filterName").addEventListener("input", aplicarFiltro);
+        document.getElementById("filterDate").addEventListener("change", aplicarFiltro);
     </script>
+    <script src="../static/js/script.js"></script>
 </body>
 
 </html>

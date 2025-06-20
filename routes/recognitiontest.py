@@ -21,6 +21,10 @@ def libacestest():
 def historicotest():
     return render_template('historico.html')
 
+@rectest.route("/cadastrosemlogin")
+def cadastrosemlogin():
+    return render_template("cadastroUsuario.html")
+
 # Ver se o reconhecimento facial consegue buscar as informações do autorizado
 @rectest.route("/membrosrectest/<int:id>", methods=["GET"])
 def get_memberrectest(id):
@@ -100,3 +104,28 @@ def get_photo(id):
             return jsonify({"foto": url_for('static', filename=f'images/{id}.{ext}')})
 
     return jsonify({"foto": url_for('static', filename='images/default.jpg')})  # Foto padrão se não encontrar
+
+
+
+from models.user import db, User
+
+def cadastrarsemlogin():
+    username = "ad"
+    email = "ad@email.com"
+    password = "123"
+    access_level = "Administrador"
+    
+    match access_level:
+        case 'Administrador':
+            access_level='a'
+        case 'Porteiro':
+            access_level='p'
+        case _:
+            return "Inválido!", 400
+    
+    user = User(username=username, email=email, access_level=access_level)
+    user.hash_password(password)
+    db.session.add(user)
+    db.session.commit()
+
+    return 'a'
