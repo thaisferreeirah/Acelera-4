@@ -5,6 +5,15 @@ from helpers import login_required
 from base64 import b64decode
 
 members = Blueprint("members", __name__)
+# Rota para a página liberarAcesso.html
+@members.route('/acesso')
+def libacestest():
+    return render_template('liberarAcesso.html')
+
+# Rota para a página historico.html
+@members.route('/historico')
+def historicotest():
+    return render_template('historico.html')
 
 @members.route("/autorizado")
 #@login_required
