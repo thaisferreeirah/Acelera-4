@@ -25,22 +25,32 @@
             border: 1px solid #000000;
             border-radius: 10px;
         }
+
+        .manual-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* centraliza os itens horizontalmente */
+            gap: 1rem;
+            /* espaço entre os elementos */
+        }
     </style>
 </head>
 
 <body>
     <div id="menu-container"></div>
+    <script src="../static/js/script.js"></script>
 
-    <div class="conteudo-principal">
-        <div class="cartao">
-            <div class="cabecalho-cartao">
+    <div class="main-content">
+        <div class="card">
+            <div class="card-header">
                 <h2><i class="fas fa-door-open"></i> Controle de Acesso Manual</h2>
             </div>
 
-            <div class="grupo-formulario">
-                <img id="stream" />
+            <div class="manual-container">
                 <img id="fotoPessoa" src="static/images/default.jpg" alt="Foto do usuário">
-                <button class="botao botao-primario" onclick="abrirPortao()">
+                <img id="stream" />
+                <button class="btn btn-primary" onclick="abrirPortao()">
                     <i class="fas fa-door-open"></i> Abrir Portão
                 </button>
             </div>
@@ -59,10 +69,10 @@
                 <textarea id="descricao" placeholder="Motivo da entrada"></textarea>
             </div>
 
-            <button class="botao botao-secundario" onclick="registrarEntrada()">
+            <button class="btn btn-secondary" onclick="registrarEntrada()">
                 <i class="fas fa-save"></i> Registrar Entrada
             </button>
-            <button class="botao botao-secundario" onclick="limparCampos()">
+            <button class="btn btn-secondary" onclick="limparCampos()">
                 <i class="fas"></i> Limpar
             </button>
         </div>

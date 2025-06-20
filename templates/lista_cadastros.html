@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,63 +16,64 @@
             gap: 20px;
             margin-top: 20px;
         }
-        
+
         .lista-cadastros {
             flex: 1;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 15px;
             max-height: 600px;
             overflow-y: auto;
         }
-        
+
         .detalhes-acoes {
             flex: 2;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 15px;
         }
-        
+
         .cadastro-item {
             padding: 10px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
             transition: background 0.3s;
         }
-        
+
         .cadastro-item:hover {
             background: #f5f5f5;
         }
-        
+
         .cadastro-item.ativo {
             background: #e3f2fd;
             border-left: 4px solid #2196f3;
         }
-        
+
         .acao-item {
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 4px;
             background: #f9f9f9;
         }
-        
+
         .entrada {
             border-left: 4px solid #4caf50;
         }
-        
+
         .saida {
             border-left: 4px solid #f44336;
         }
-        
+
         .filtros {
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
         }
-        
-        .filtros input, .filtros select {
+
+        .filtros input,
+        .filtros select {
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -80,30 +82,14 @@
 </head>
 
 <body>
-    <nav class="menu-superior">
-        <div class="logo-menu">
-            <i class="fas fa-school"></i>
-            <h2>Controle de Acesso</h2>
-        </div>
-        
-        <ul class="itens-menu">
-            <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="/historico" class=""><i class="fas fa-history"></i> Histórico</a></li>
-            <li><a href="/aluno"><i class="fas fa-users"></i> Alunos</a></li>
-            <li><a href="/acesso"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
-            <li><a href="/autorizado"><i class="fas fa-user-plus"></i>Funcionario</a></li>
-            <li><a href="/cadastro"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
-            <li><a href="/lista-cadastros" class="ativo"><i class="fas fa-list"></i> Lista de Cadastros</a></li>
-            <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
-        </ul>
-    </nav>
-    
+    <div id="menu-container"></div>
+
     <main class="main-content">
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-list"></i> Lista de Cadastros e Ações</h2>
             </div>
-            
+
             <div class="filtros">
                 <input type="text" id="filtroNome" placeholder="Filtrar por nome...">
                 <select id="filtroCargo">
@@ -114,7 +100,7 @@
                     <option value="Cordenador">Coordenador</option>
                 </select>
             </div>
-            
+
             <div class="registros-container">
                 <div class="lista-cadastros" id="listaCadastros">
                     <!-- Itens serão carregados via JavaScript -->
@@ -122,7 +108,7 @@
                         <i class="fas fa-spinner fa-spin"></i> Carregando cadastros...
                     </div>
                 </div>
-                
+
                 <div class="detalhes-acoes" id="detalhesAcoes">
                     <div class="mensagem-selecao">
                         <i class="fas fa-hand-pointer"></i> Selecione um cadastro para ver as ações
@@ -131,7 +117,7 @@
             </div>
         </div>
     </main>
-    
+
     <script>
         // Dados de exemplo (substituir por dados reais do backend)
         const cadastros = [
@@ -183,18 +169,18 @@
         function carregarCadastros(filtroNome = '', filtroCargo = '') {
             const listaCadastros = document.getElementById('listaCadastros');
             listaCadastros.innerHTML = '';
-            
+
             const cadastrosFiltrados = cadastros.filter(cadastro => {
                 const nomeMatch = cadastro.nome.toLowerCase().includes(filtroNome.toLowerCase());
                 const cargoMatch = filtroCargo === '' || cadastro.cargo === filtroCargo;
                 return nomeMatch && cargoMatch;
             });
-            
+
             if (cadastrosFiltrados.length === 0) {
                 listaCadastros.innerHTML = '<div class="mensagem-vazio">Nenhum cadastro encontrado</div>';
                 return;
             }
-            
+
             cadastrosFiltrados.forEach(cadastro => {
                 const item = document.createElement('div');
                 item.className = 'cadastro-item';
@@ -204,7 +190,7 @@
                     <p><strong>Cargo:</strong> ${cadastro.cargo}</p>
                     <p><strong>CPF:</strong> ${cadastro.cpf}</p>
                 `;
-                
+
                 item.addEventListener('click', () => mostrarAcoes(cadastro));
                 listaCadastros.appendChild(item);
             });
@@ -216,10 +202,10 @@
             document.querySelectorAll('.cadastro-item').forEach(item => {
                 item.classList.remove('ativo');
             });
-            
+
             // Adicionar classe ativa ao item clicado
             document.querySelector(`.cadastro-item[data-id="${cadastro.id}"]`).classList.add('ativo');
-            
+
             const detalhesAcoes = document.getElementById('detalhesAcoes');
             detalhesAcoes.innerHTML = `
                 <h3>Ações de ${cadastro.nome} (${cadastro.cargo})</h3>
@@ -239,13 +225,13 @@
         // Carregar dados quando a página é aberta
         document.addEventListener('DOMContentLoaded', () => {
             carregarCadastros();
-            
+
             // Configurar filtros
             document.getElementById('filtroNome').addEventListener('input', (e) => {
                 const filtroCargo = document.getElementById('filtroCargo').value;
                 carregarCadastros(e.target.value, filtroCargo);
             });
-            
+
             document.getElementById('filtroCargo').addEventListener('change', (e) => {
                 const filtroNome = document.getElementById('filtroNome').value;
                 carregarCadastros(filtroNome, e.target.value);
@@ -261,5 +247,7 @@
             });
         }
     </script>
+    <script src="../static/js/script.js"></script>
 </body>
+
 </html>
