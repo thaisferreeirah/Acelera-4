@@ -665,8 +665,6 @@ select:focus {
     box-shadow: 0 0 0 2px rgba(165, 214, 16, 0.2);
 }
 
-<<<<<<< HEAD
-=======
 .input-group select:hover {
     border-color: var(--verde-militar);
 }
@@ -691,7 +689,6 @@ select:focus {
     color: var(--verde-limao);
     transform: scale(1.1);
 }
->>>>>>> 2df33a3e79a97786be9826fbd8c6095dcd7c58d7
 
 /* ANIMAÇÕES E EFEITOS VISUAIS */
 @keyframes fadeInUp {
@@ -1037,7 +1034,7 @@ h1 {
 p {
     color: #666;
     font-size: 0.9rem;
-<<<<<<< HEAD
+
 }
 
 .input-group:hover {
@@ -1057,6 +1054,3 @@ p {
     outline: none;
     color: #333;
 }
-=======
-}
->>>>>>> 2df33a3e79a97786be9826fbd8c6095dcd7c58d7
