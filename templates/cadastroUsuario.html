@@ -86,6 +86,7 @@
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -96,23 +97,7 @@
 </head>
 
 <body>
-    <nav class="menu-superior">
-        <div class="logo-menu">
-            <i class="fas fa-school"></i>
-            <h2>Controle de Acesso</h2>
-        </div>
-        
-        <ul class="itens-menu">
-            <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="/historico" class=""><i class="fas fa-history"></i> Histórico</a></li>
-            <li><a href="/aluno"><i class="fas fa-users"></i> Alunos</a></li>
-            <li><a href="/acesso"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
-            <li><a href="/autorizado"><i class="fas fa-user-plus"></i> Funcionário</a></li>
-            <li><a href="/cadastro" class="ativo"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
-            <li><a href="/lista-cadastros"><i class="fas fa-list"></i> Lista de Cadastros</a></li>
-            <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
-        </ul>
-    </nav>
+    <div id="menu-container"></div>
 
     <main class="main-content">
         <div class="card">
@@ -121,7 +106,7 @@
                 <h1>Cadastrar Usuario</h1>
                 <h2><i class="fas fa-user-plus"></i> Preencha o formulário para cadastrar um novo acesso ao sistema</h2>
             </div>
-            
+
             <div class="card-body">
                 <form id="registerForm" class="login-form" action="/cadastro" method="post">
                     <div class="input-group">
@@ -141,28 +126,16 @@
                      -->
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            placeholder="Senha" 
-                            name="password" 
-                            required
-                            minlength="6"   
-                        >
+                        <input type="password" id="password" placeholder="Senha" name="password" required minlength="6">
                     </div>
 
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
-                    <input 
-                        type="password" 
-                        id="confirmPassword" 
-                        placeholder="Confirmar Senha" 
-                        required
-                        oninput="checkPasswordMatch()"  
-                    >
-                    <small id="passwordError" style="color: red; display: none;">As senhas não coincidem!</small>
-                </div>
-                    
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmPassword" placeholder="Confirmar Senha" required
+                            oninput="checkPasswordMatch()">
+                        <small id="passwordError" style="color: red; display: none;">As senhas não coincidem!</small>
+                    </div>
+
                     <div class="input-group">
                         <select id="regPosition" name="access" required>
                             <option value="" disabled selected>Selecione seu cargo/função</option>
@@ -170,7 +143,7 @@
                             <option value="Porteiro">Porteiro</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-actions">
                         <button type="submit" class="btn btn-secondary">
                             <i class="fas fa-user-check"></i> Cadastrar
@@ -184,24 +157,26 @@
     <script src="js/script.js"></script>
     <script>
         var socket = io.connect('http://192.168.197.89:5000');
-        
-        socket.on('stream_raw', function(frame) {
+
+        socket.on('stream_raw', function (frame) {
             document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
         });
 
-        socket.on('connect', function() {
+        socket.on('connect', function () {
             console.log("Conectado ao WebSocket!");
             socket.emit('start_stream');
         });
 
-        socket.on('stream', function(frame) {
+        socket.on('stream', function (frame) {
             console.log("Frame recebido!");
             document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
         });
 
-        socket.on('disconnect', function() {
+        socket.on('disconnect', function () {
             console.log("WebSocket desconectado!");
         });
     </script>
+    <script src="../static/js/script.js"></script>
 </body>
+
 </html>
