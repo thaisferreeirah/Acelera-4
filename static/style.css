@@ -73,13 +73,12 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 15px;
 
     border: 1px solid #ddd;
     border-radius: 5px;
-    padding: 10px 15px;
-    transition: border-color 0.3s;
-    transition: all 0.3s ease;
+    padding: 5px 15px;
+    transition: border-color 0.2s;
+    transition: all 0.2s ease;
 }
 
 .btn-login {
@@ -92,12 +91,11 @@ body {
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    transition: all 0.4s ease;
+    transition: all 0.2s ease;
 }
 
 .btn-login:hover {
@@ -169,7 +167,7 @@ body {
     gap: 10px;
     padding: 0.5rem;
     border-radius: 5px;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
 
 .sidebar-nav a:hover,
@@ -271,7 +269,7 @@ body {
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
     border: none;
 }
 
@@ -446,7 +444,7 @@ body {
     gap: 8px;
     padding: 0.5rem;
     border-radius: 5px;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
 
 .itens-menu a:hover,
@@ -530,7 +528,7 @@ textarea:focus {
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
     border: none;
     margin-right: 10px;
 }
@@ -707,7 +705,7 @@ select:focus {
 /* EFEITOS PARA O FORMULÁRIO */
 .card2 {
     animation: fadeInUp 0.6s ease-out forwards;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .card2:hover {
@@ -827,7 +825,7 @@ input:invalid:not(:placeholder-shown) {
 /* EFEITOS PARA OS CARDS */
 .card {
     animation: slideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    transition: all 0.4s ease;
+    transition: all 0.2s ease;
     opacity: 0;
     /* Inicia invisível para a animação */
 }
@@ -846,7 +844,7 @@ input:invalid:not(:placeholder-shown) {
 }
 
 .card-header {
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .card-header:hover {
@@ -854,7 +852,7 @@ input:invalid:not(:placeholder-shown) {
 }
 
 .card-header h2 i {
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .card-header:hover h2 i {
@@ -867,7 +865,7 @@ input:invalid:not(:placeholder-shown) {
     position: relative;
     border-radius: 10px;
     overflow: hidden;
-    transition: all 0.5s ease;
+    transition: all 0.2s ease;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -877,7 +875,7 @@ input:invalid:not(:placeholder-shown) {
 }
 
 #video {
-    transition: all 0.5s ease;
+    transition: all 0.2s ease;
     border: 3px solid var(--verde-militar);
 }
 
@@ -889,7 +887,7 @@ input:invalid:not(:placeholder-shown) {
 .btn {
     position: relative;
     overflow: hidden;
-    transition: all 0.4s ease;
+    transition: all 0.2s ease;
     transform-style: preserve-3d;
 }
 
@@ -913,7 +911,7 @@ input:invalid:not(:placeholder-shown) {
 }
 
 .btn i {
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .btn:hover i {
@@ -926,7 +924,7 @@ input:invalid:not(:placeholder-shown) {
 }
 
 .table tr {
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .table tr:hover {
@@ -1000,7 +998,7 @@ input:invalid:not(:placeholder-shown) {
     font-size: 0.8rem;
     font-weight: bold;
     text-transform: uppercase;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .entrada {
