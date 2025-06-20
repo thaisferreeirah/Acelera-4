@@ -1,4 +1,4 @@
-from db import db
+from db import db  # Mantenha como está se db está definido assim
 
 class Authorized(db.Model):
     __tablename__ = 'authorized'
@@ -6,4 +6,4 @@ class Authorized(db.Model):
     authorized_name = db.Column(db.String(255))
     cpf = db.Column(db.String(14), unique=True)
     position = db.Column(db.String(12))
-    photo = db.Column(db.Text, unique=True)
+    # photo = db.Column(db.Text, unique=True)  # Mantido comentado como no seu original
