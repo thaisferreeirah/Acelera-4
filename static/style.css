@@ -923,4 +923,23 @@ h1 {
 p {
     color: #666;
     font-size: 0.9rem;
+
+}
+
+.input-group:hover {
+    border-color: #2E7D32;
+}
+
+.input-group i {
+    color: var(--verde-militar);
+    margin-right: 10px;
+    font-size: 1rem;
+    left: 15px;
+    transition: all 0.2s ease;
+}
+
+.input-group input {
+    border: none;
+    outline: none;
+    color: #333;
 }
