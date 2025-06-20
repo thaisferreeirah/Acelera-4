@@ -673,11 +673,6 @@ select:focus {
     box-shadow: 0 0 0 2px rgba(165, 214, 16, 0.2);
 }
 
-/* Ajuste para o ícone no select */
-/* .input-group select {
-    padding-left: 40px;
-    background-position: right 15px center;
-} */
 
 /* ANIMAÇÕES E EFEITOS VISUAIS */
 @keyframes fadeInUp {
