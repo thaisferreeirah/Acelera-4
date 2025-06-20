@@ -1,0 +1,265 @@
+<!-- aqui vamos colocar uma lista de castratos e ao clicar nela vamos ver suas acoes -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Cadastros - Controle de Acesso Escolar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../static/style.css">
+    <style>
+        /* Estilos adicionais específicos para esta página */
+        .registros-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .lista-cadastros {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .detalhes-acoes {
+            flex: 2;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px;
+        }
+        
+        .cadastro-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .cadastro-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .cadastro-item.ativo {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .acao-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+        
+        .entrada {
+            border-left: 4px solid #4caf50;
+        }
+        
+        .saida {
+            border-left: 4px solid #f44336;
+        }
+        
+        .filtros {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .filtros input, .filtros select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="menu-superior">
+        <div class="logo-menu">
+            <i class="fas fa-school"></i>
+            <h2>Controle de Acesso</h2>
+        </div>
+        
+        <ul class="itens-menu">
+            <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="/historico" class=""><i class="fas fa-history"></i> Histórico</a></li>
+            <li><a href="/aluno"><i class="fas fa-users"></i> Alunos</a></li>
+            <li><a href="/acesso"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
+            <li><a href="/autorizado"><i class="fas fa-user-plus"></i>Funcionario</a></li>
+            <li><a href="/cadastro"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
+            <li><a href="/lista-cadastros" class="ativo"><i class="fas fa-list"></i> Lista de Cadastros</a></li>
+            <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+        </ul>
+    </nav>
+    
+    <main class="main-content">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-list"></i> Lista de Cadastros e Ações</h2>
+            </div>
+            
+            <div class="filtros">
+                <input type="text" id="filtroNome" placeholder="Filtrar por nome...">
+                <select id="filtroCargo">
+                    <option value="">Todos os cargos</option>
+                    <option value="Secretária">Secretária</option>
+                    <option value="Diretor">Diretor</option>
+                    <option value="Professor">Professor</option>
+                    <option value="Cordenador">Coordenador</option>
+                </select>
+            </div>
+            
+            <div class="registros-container">
+                <div class="lista-cadastros" id="listaCadastros">
+                    <!-- Itens serão carregados via JavaScript -->
+                    <div class="mensagem-carregando">
+                        <i class="fas fa-spinner fa-spin"></i> Carregando cadastros...
+                    </div>
+                </div>
+                
+                <div class="detalhes-acoes" id="detalhesAcoes">
+                    <div class="mensagem-selecao">
+                        <i class="fas fa-hand-pointer"></i> Selecione um cadastro para ver as ações
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // Dados de exemplo (substituir por dados reais do backend)
+        const cadastros = [
+            {
+                id: 1,
+                nome: "Maria Silva",
+                cargo: "Secretária",
+                cpf: "123.456.789-00",
+                acoes: [
+                    { tipo: "entrada", pessoa: "João Almeida (Aluno)", data: "05/05/2023 08:15" },
+                    { tipo: "saida", pessoa: "João Almeida (Aluno)", data: "05/05/2023 12:30" },
+                    { tipo: "entrada", pessoa: "Carlos Santos (Visitante)", data: "05/05/2023 14:00" }
+                ]
+            },
+            {
+                id: 2,
+                nome: "José Oliveira",
+                cargo: "Diretor",
+                cpf: "987.654.321-00",
+                acoes: [
+                    { tipo: "entrada", pessoa: "Ana Paula (Funcionária)", data: "04/05/2023 07:45" },
+                    { tipo: "entrada", pessoa: "Roberto Costa (Visitante)", data: "04/05/2023 10:20" }
+                ]
+            },
+            {
+                id: 3,
+                nome: "Ana Paula",
+                cargo: "Professor",
+                cpf: "456.789.123-00",
+                acoes: [
+                    { tipo: "entrada", pessoa: "Pedro Henrique (Aluno)", data: "03/05/2023 13:15" },
+                    { tipo: "saida", pessoa: "Pedro Henrique (Aluno)", data: "03/05/2023 17:30" }
+                ]
+            },
+            {
+                id: 4,
+                nome: "Carlos Mendes",
+                cargo: "Cordenador",
+                cpf: "789.123.456-00",
+                acoes: [
+                    { tipo: "entrada", pessoa: "Luiza Fernandes (Aluno)", data: "02/05/2023 09:00" },
+                    { tipo: "saida", pessoa: "Luiza Fernandes (Aluno)", data: "02/05/2023 16:45" },
+                    { tipo: "entrada", pessoa: "Fernanda Lima (Visitante)", data: "02/05/2023 11:30" }
+                ]
+            }
+        ];
+
+        // Função para carregar a lista de cadastros
+        function carregarCadastros(filtroNome = '', filtroCargo = '') {
+            const listaCadastros = document.getElementById('listaCadastros');
+            listaCadastros.innerHTML = '';
+            
+            const cadastrosFiltrados = cadastros.filter(cadastro => {
+                const nomeMatch = cadastro.nome.toLowerCase().includes(filtroNome.toLowerCase());
+                const cargoMatch = filtroCargo === '' || cadastro.cargo === filtroCargo;
+                return nomeMatch && cargoMatch;
+            });
+            
+            if (cadastrosFiltrados.length === 0) {
+                listaCadastros.innerHTML = '<div class="mensagem-vazio">Nenhum cadastro encontrado</div>';
+                return;
+            }
+            
+            cadastrosFiltrados.forEach(cadastro => {
+                const item = document.createElement('div');
+                item.className = 'cadastro-item';
+                item.dataset.id = cadastro.id;
+                item.innerHTML = `
+                    <h3>${cadastro.nome}</h3>
+                    <p><strong>Cargo:</strong> ${cadastro.cargo}</p>
+                    <p><strong>CPF:</strong> ${cadastro.cpf}</p>
+                `;
+                
+                item.addEventListener('click', () => mostrarAcoes(cadastro));
+                listaCadastros.appendChild(item);
+            });
+        }
+
+        // Função para mostrar as ações de um cadastro
+        function mostrarAcoes(cadastro) {
+            // Remover classe ativa de todos os itens
+            document.querySelectorAll('.cadastro-item').forEach(item => {
+                item.classList.remove('ativo');
+            });
+            
+            // Adicionar classe ativa ao item clicado
+            document.querySelector(`.cadastro-item[data-id="${cadastro.id}"]`).classList.add('ativo');
+            
+            const detalhesAcoes = document.getElementById('detalhesAcoes');
+            detalhesAcoes.innerHTML = `
+                <h3>Ações de ${cadastro.nome} (${cadastro.cargo})</h3>
+                <p>Total de ações: ${cadastro.acoes.length}</p>
+                <div class="acoes-lista">
+                    ${cadastro.acoes.map(acao => `
+                        <div class="acao-item ${acao.tipo}">
+                            <p><strong>${acao.tipo === 'entrada' ? 'Liberou entrada' : 'Registrou saída'}</strong></p>
+                            <p>Pessoa: ${acao.pessoa}</p>
+                            <p>Data: ${acao.data}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Carregar dados quando a página é aberta
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarCadastros();
+            
+            // Configurar filtros
+            document.getElementById('filtroNome').addEventListener('input', (e) => {
+                const filtroCargo = document.getElementById('filtroCargo').value;
+                carregarCadastros(e.target.value, filtroCargo);
+            });
+            
+            document.getElementById('filtroCargo').addEventListener('change', (e) => {
+                const filtroNome = document.getElementById('filtroNome').value;
+                carregarCadastros(filtroNome, e.target.value);
+            });
+        });
+
+        // Simular conexão com o backend (substituir por chamadas reais)
+        function buscarCadastrosDoBackend() {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve(cadastros);
+                }, 500);
+            });
+        }
+    </script>
+</body>
+</html>
