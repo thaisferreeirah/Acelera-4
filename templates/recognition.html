@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,6 +40,7 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
+
 <body>
     <img id="stream">
     <h2 id="recognized-name">Posicione o rosto no centro da câmera</h2>
@@ -48,12 +50,12 @@
         socket.emit('enable_recognition'); // Ativar reconhecimento facial nesta página
 
         // Atualizar vídeo normal
-        socket.on('stream_raw', function(frame) {
+        socket.on('stream_raw', function (frame) {
             document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
         });
 
         // Exibir nome do rosto reconhecido
-        socket.on('recognized_name', function(data) {
+        socket.on('recognized_name', function (data) {
             if (data.name === "Desconhecido") {
                 document.getElementById('recognized-name').innerText = "Rosto desconhecido";
             } else {
@@ -66,4 +68,5 @@
         });
     </script>
 </body>
+
 </html>

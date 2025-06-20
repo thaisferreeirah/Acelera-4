@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,101 +9,85 @@
     <link rel="stylesheet" href="../static/style.css">
 
 </head>
+
 <body>
     <!-- menusuperior -->
-    <nav class="menu-superior">
-    <div class="logo-menu">
-        <i class="fas fa-school"></i>
-        <h2>Controle de Acesso</h2>
-    </div>
-    
-    
-   
-     <ul class="itens-menu">
-            <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="/historico" class=""><i class="fas fa-history"></i> Histórico</a></li>
-            <li><a href="/aluno" class="ativo"><i class="fas fa-users"></i> Alunos</a></li>
-            <li><a href="/acesso"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
-            <li><a href="/autorizado"><i class="fas fa-user-plus"></i>Funcionario</a></li>
-            <li><a href="/cadastro"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
-            <li><a href="/lista-cadastros"><i class="fas fa-list"></i> Lista de Cadastros</a></li>
-            <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
-    </ul>
-    </nav>
-        
-        <main class="main-content">
-             <div class="card">
-                    <div class="card-header">
-                         <h2><i class="fas fa-user-plus"></i> Cadastrar Novo Aluno</h2>
-                    </div>
-                    
-                    <div class="face-recognition">
-                        <div class="video-container">
-                            <video id="video" width="500" height="375" autoplay muted></video>
-                            <div class="canvas-container"></div>
-                        </div>
-                        
-                        <div class="recognition-controls">
-                            <button class="btn btn-primary" onclick="simulateAccess()">
-                                <i class="fas fa-user-check"></i>  Ativar reconhecimento facial
-                            </button>
-                            <button class="btn btn-secondary" onclick="alert('Funcionalidade de cadastro facial será implementada aqui')">
-                                <i class="fas fa-user-plus"></i> Cadastrar Rosto
-                            </button>
-                        </div>
-                    </div>
+    <div id="menu-container"></div>
+
+    <main class="main-content">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-user-plus"></i> Cadastrar Novo Aluno</h2>
+            </div>
+
+            <div class="face-recognition">
+                <div class="video-container">
+                    <video id="video" width="500" height="375" autoplay muted></video>
+                    <div class="canvas-container"></div>
                 </div>
-            <div class="card">  
-                <form id="studentForm" action="/aluno/cadastro" method="POST">
-                    <div class="form-group">
-                        <label for="name">Nome Completo</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="registration">Matrícula</label>
-                        <input type="text" id="registration" name="id" class="form-control" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="class">Turma</label>
-                        <input type="text" id="class" name="class" class="form-control" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="photo">Foto (para reconhecimento facial)</label>
-                        <input type="file" id="photo" name="photo" class="form-control" accept="image/*">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Salvar Aluno
+
+                <div class="recognition-controls">
+                    <button class="btn btn-primary" onclick="simulateAccess()">
+                        <i class="fas fa-user-check"></i> Simular Acesso
                     </button>
-                </form>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="fas fa-users"></i> Alunos Cadastrados</h2>
-                    <input type="text" id="searchStudent" class="form-control" placeholder="Pesquisar aluno..." 
-                           style="display: inline-block; width: auto;" oninput="searchStudents()">
+                    <button class="btn btn-secondary"
+                        onclick="alert('Funcionalidade de cadastro facial será implementada aqui')">
+                        <i class="fas fa-user-plus"></i> Cadastrar Rosto
+                    </button>
                 </div>
-                
-                <table class="table" id="studentsTable">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nome</th>
-                            <th>Matrícula</th>
-                            <th>Turma</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Preenchido por JavaScript -->
-                    </tbody>
-                </table>
             </div>
-        </main>
+        </div>
+        <div class="card">
+            <form id="studentForm" action="/aluno/cadastro" method="POST">
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registration">Matrícula</label>
+                    <input type="text" id="registration" name="id" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="class">Turma</label>
+                    <input type="text" id="class" name="class" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="photo">Foto (para reconhecimento facial)</label>
+                    <input type="file" id="photo" name="photo" class="form-control" accept="image/*">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Aluno
+                </button>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-users"></i> Alunos Cadastrados</h2>
+                <input type="text" id="searchStudent" class="form-control" placeholder="Pesquisar aluno..."
+                    style="display: inline-block; width: auto;" oninput="searchStudents()">
+            </div>
+
+            <table class="table" id="studentsTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nome</th>
+                        <th>Matrícula</th>
+                        <th>Turma</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Preenchido por JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </main>
     </div>
 
     <!-- Modal de Edição (oculto por padrão) -->
@@ -118,24 +103,25 @@
                 <div class="modal-body">
                     <form id="editStudentForm" onsubmit="updateStudent(event)">
                         <input type="hidden" id="editIndex" name="editIndex">
-                        
+
                         <div class="form-group">
                             <label for="editName">Nome Completo</label>
                             <input type="text" id="editName" name="name" class="form-control" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="editRegistration">Matrícula</label>
                             <input type="text" id="editRegistration" name="registration" class="form-control" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="editClass">Turma</label>
                             <input type="text" id="editClass" name="class" class="form-control" required>
                         </div>
-                        
+
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick="$('#editStudentModal').modal('hide')">
+                            <button type="button" class="btn btn-secondary"
+                                onclick="$('#editStudentModal').modal('hide')">
                                 Cancelar
                             </button>
                             <button type="submit" class="btn btn-primary">
@@ -150,5 +136,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/script.js"></script>
+    <script src="../static/js/script.js"></script>
 </body>
+
 </html>

@@ -112,6 +112,24 @@ body {
     transform: translateY(1px);
 }
 
+.btn-login::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.btn-login:focus:not(:active)::after {
+    animation: pulse 1s ease-out;
+}
+
 .login-footer {
     text-align: center;
     margin-top: 1.5rem;
@@ -203,26 +221,15 @@ body {
 .main-content2 {
     display: flex;
     justify-content: center;
-    /* Centraliza horizontalmente */
     align-items: center;
-    /* Centraliza verticalmente */
     min-height: 100vh;
-    /* Ocupa 100% da altura da tela */
     padding: 20px;
     background-color: #f9f9f9;
-    /* Opcional: fundo suave */
-}
 
-.card2 {
+    padding: 2rem;
+    min-height: calc(100vh - 70px); /* Considera a altura do menu superior */
     width: 100%;
-    max-width: 500px;
-    /* Largura máxima do formulário */
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
 
 .card-header {
     display: flex;
@@ -276,6 +283,11 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     border: none;
+
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    transform-style: preserve-3d;
 }
 
 .btn-primary {
@@ -285,6 +297,7 @@ body {
 
 .btn-primary:hover {
     background-color: var(--verde-escuro);
+    animation: pulseGlow 2s infinite;
 }
 
 .btn-secondary {
@@ -293,7 +306,8 @@ body {
 }
 
 .btn-secondary:hover {
-    background-color: #b5e632;
+    background-color: var(--verde-limao);
+    color: var(--verde-escuro);
 }
 
 /* Estilos para tabelas */
@@ -462,37 +476,6 @@ body {
     font-size: 1rem;
 }
 
-/* Conteúdo principal */
-.conteudo-principal {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Cards */
-.cartao {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    border-left: 4px solid var(--verde-limao);
-}
-
-.cabecalho-cartao {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #eee;
-}
-
-.cabecalho-cartao h2 {
-    color: var(--verde-escuro);
-    font-size: 1.2rem;
-}
-
 input,
 textarea {
     width: 100%;
@@ -512,35 +495,6 @@ textarea:focus {
     border-color: var(--verde-limao);
     outline: none;
     box-shadow: 0 0 0 2px rgba(165, 214, 16, 0.2);
-}
-
-.botao {
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-    margin-right: 10px;
-}
-
-.botao-primario {
-    background-color: var(--verde-militar);
-    color: white;
-}
-
-.botao-primario:hover {
-    background-color: var(--verde-escuro);
-}
-
-.botao-secundario {
-    background-color: var(--verde-limao);
-    color: var(--verde-escuro);
-}
-
-.botao-secundario:hover {
-    background-color: #b5e632;
 }
 
 /* Tabelas */
@@ -583,7 +537,7 @@ textarea:focus {
         margin: 0.3rem;
     }
 
-    .conteudo-principal {
+    .main-content {
         padding: 1rem;
     }
 }
@@ -596,7 +550,6 @@ select {
     flex-grow: 1;
     background-color: white;
     appearance: none;
-    /* Remove estilo padrão do navegador */
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 10px center;
@@ -607,24 +560,6 @@ select:focus {
     outline: none;
     border-color: #4285f4;
     box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
-}
-
-/* Ajustes para o layout expansivo */
-.main-content2 {
-    padding: 2rem;
-    min-height: calc(100vh - 70px);
-    /* Considera a altura do menu superior */
-    width: 100%;
-}
-
-.card2 {
-    width: 100%;
-    max-width: 800px;
-    /* Aumentei a largura máxima */
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Faz os últimos elementos (botão) ocuparem duas colunas */
@@ -721,29 +656,17 @@ select:focus {
 .card2 {
     animation: fadeInUp 0.6s ease-out forwards;
     transition: all 0.2s ease;
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 .card2:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-.btn-login::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.5);
-    opacity: 0;
-    border-radius: 100%;
-    transform: scale(1, 1) translate(-50%);
-    transform-origin: 50% 50%;
-}
-
-.btn-login:focus:not(:active)::after {
-    animation: pulse 1s ease-out;
 }
 
 /* EFEITO AO ENVIAR O FORMULÁRIO */
@@ -824,7 +747,6 @@ input:invalid:not(:placeholder-shown) {
     animation: slideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
     transition: all 0.2s ease;
     opacity: 0;
-    /* Inicia invisível para a animação */
 }
 
 .card:nth-child(1) {
@@ -881,13 +803,6 @@ input:invalid:not(:placeholder-shown) {
 }
 
 /* BOTÕES ANIMADOS */
-.btn {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.2s ease;
-    transform-style: preserve-3d;
-}
-
 .btn:hover {
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 7px 20px rgba(75, 83, 32, 0.3);
@@ -895,16 +810,6 @@ input:invalid:not(:placeholder-shown) {
 
 .btn:active {
     transform: translateY(1px);
-}
-
-.btn-primary:hover {
-    background-color: var(--verde-escuro);
-    animation: pulseGlow 2s infinite;
-}
-
-.btn-secondary:hover {
-    background-color: #b5e632;
-    color: var(--verde-escuro);
 }
 
 .btn i {
@@ -930,7 +835,7 @@ input:invalid:not(:placeholder-shown) {
 }
 
 .table th {
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .table th:hover {
@@ -940,15 +845,15 @@ input:invalid:not(:placeholder-shown) {
 
 /* TABELA ANIMAÇÃO */
 @keyframes tableRowAppear {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
 }
 
 .table tbody tr {
@@ -1001,22 +906,6 @@ input:invalid:not(:placeholder-shown) {
     to {
         opacity: 0;
     }
-}
-
-*l {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-bodyl {
-    background-color: #f5f5f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
 }
 
 .icon-large {
