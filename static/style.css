@@ -10,10 +10,10 @@
 
 /* Reset */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Estilos gerais */
@@ -493,18 +493,6 @@ body {
     font-size: 1.2rem;
 }
 
-/* Formulários e botões */
-.grupo-formulario {
-    margin-bottom: 1rem;
-}
-
-.grupo-formulario label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--verde-escuro);
-    font-weight: 500;
-}
-
 input,
 textarea {
     width: 100%;
@@ -656,11 +644,15 @@ select:focus {
     }
 }
 
-/* Melhorias visuais para os inputs */
+.input-group select {
+    cursor: pointer;
+}
+
 .input-group input,
 .input-group select {
+    border: none;
     font-size: 1rem;
-    border: 1px solid #ddd;
+    color: #333;
     border-radius: 5px;
     transition: all 0.2s;
     width: 100%;
@@ -673,6 +665,33 @@ select:focus {
     box-shadow: 0 0 0 2px rgba(165, 214, 16, 0.2);
 }
 
+<<<<<<< HEAD
+=======
+.input-group select:hover {
+    border-color: var(--verde-militar);
+}
+
+.input-group:hover {
+    border-color: #2E7D32;
+}
+
+.input-group i {
+    color: var(--verde-militar);
+    margin-right: 10px;
+    font-size: 1rem;
+    left: 15px;
+    transition: all 0.2s ease;
+}
+
+.input-group:focus-within {
+    transform: scale(1.02);
+}
+
+.input-group:focus-within i {
+    color: var(--verde-limao);
+    transform: scale(1.1);
+}
+>>>>>>> 2df33a3e79a97786be9826fbd8c6095dcd7c58d7
 
 /* ANIMAÇÕES E EFEITOS VISUAIS */
 @keyframes fadeInUp {
@@ -710,15 +729,6 @@ select:focus {
 .card2:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-.input-group:focus-within {
-    transform: scale(1.02);
-}
-
-.input-group:focus-within i {
-    color: var(--verde-limao);
-    transform: scale(1.1);
 }
 
 .btn-login::after {
@@ -760,15 +770,6 @@ select:focus {
     100% {
         transform: scale(1);
     }
-}
-
-/* MELHORIAS NO SELECT */
-.input-group select {
-    cursor: pointer;
-}
-
-.input-group select:hover {
-    border-color: var(--verde-militar);
 }
 
 /* FEEDBACK VISUAL PARA CAMPOS VÁLIDOS/INVÁLIDOS */
@@ -940,42 +941,22 @@ input:invalid:not(:placeholder-shown) {
     transform: translateY(-2px);
 }
 
-/* EFEITO DE CARGA PARA A TABELA (SIMULAÇÃO) */
+/* TABELA ANIMAÇÃO */
 @keyframes tableRowAppear {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }
 
 .table tbody tr {
-    animation: tableRowAppear 0.5s ease forwards;
+    animation: tableRowAppear 0.3s ease forwards;
     opacity: 0;
-}
-
-.table tbody tr:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.table tbody tr:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.table tbody tr:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-.table tbody tr:nth-child(4) {
-    animation-delay: 0.4s;
-}
-
-.table tbody tr:nth-child(5) {
-    animation-delay: 0.5s;
 }
 
 /* RESPONSIVIDADE */
@@ -1056,6 +1037,7 @@ h1 {
 p {
     color: #666;
     font-size: 0.9rem;
+<<<<<<< HEAD
 }
 
 .input-group:hover {
@@ -1075,3 +1057,6 @@ p {
     outline: none;
     color: #333;
 }
+=======
+}
+>>>>>>> 2df33a3e79a97786be9826fbd8c6095dcd7c58d7

@@ -12,11 +12,12 @@
         #stream {
             width: 200px;
             height: 200px;
-            object-fit: cover; /* Ajusta a imagem sem distorcer */
+            object-fit: cover;
+            /* Ajusta a imagem sem distorcer */
             border: 1px solid #000000;
             border-radius: 10px;
         }
-        
+
         #fotoPessoa {
             width: 200px;
             height: 200px;
@@ -30,32 +31,15 @@
 <body>
     <div id="menu-container"></div>
 
-<<<<<<< HEAD
-        <ul class="itens-menu">
-            <li><a href="/"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="/historico" class=""><i class="fas fa-history"></i> Histórico</a></li>
-            <li><a href="/aluno"><i class="fas fa-users"></i> Alunos</a></li>
-            <li><a href="/acesso"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
-            <li><a href="/autorizado"><i class="fas fa-user-plus"></i> Funcionário</a></li>
-            <li><a href="/cadastro"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
-             <li><a href="/lista-cadastros"><i class="fas fa-list"></i> Lista de Cadastros</a></li>
-            <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
-        </ul>
-    </nav>
-
-    <!-- Conteúdo Principal -->
-=======
->>>>>>> 48489c646ec5e19060213ba7d91b465d1facdfe4
     <div class="conteudo-principal">
         <div class="cartao">
             <div class="cabecalho-cartao">
                 <h2><i class="fas fa-door-open"></i> Controle de Acesso Manual</h2>
             </div>
-            
-            <img id="stream" />
-            <img id="fotoPessoa" src="static/images/default.jpg" alt="Foto do usuário">
 
             <div class="grupo-formulario">
+                <img id="stream" />
+                <img id="fotoPessoa" src="static/images/default.jpg" alt="Foto do usuário">
                 <button class="botao botao-primario" onclick="abrirPortao()">
                     <i class="fas fa-door-open"></i> Abrir Portão
                 </button>
@@ -64,7 +48,6 @@
             <h3><i class="fas fa-user-plus"></i> Registrar Entrada</h3>
 
             <div class="grupo-formulario">
-                <!-- <input type="text" id="nome" placeholder="Nome completo"> -->
                 <input list="nameList" id="searchBox" placeholder="Digite ou selecione um nome">
                 <datalist id="nameList"></datalist>
 
@@ -124,14 +107,14 @@
                 });
             });
 
-        document.getElementById("searchBox").addEventListener("input", function() {
+        document.getElementById("searchBox").addEventListener("input", function () {
             let selectedOption = [...document.getElementById("nameList").options].find(
                 option => option.value.toLowerCase() === this.value.toLowerCase()
             );
             document.getElementById("idBox").value = selectedOption ? selectedOption.dataset.id : "";
         });
 
-        document.getElementById("idBox").addEventListener("input", function() {
+        document.getElementById("idBox").addEventListener("input", function () {
             let selectedOption = [...document.getElementById("idList").options].find(
                 option => option.value === this.value
             );
@@ -150,7 +133,7 @@
         }
 
         // Atualiza a foto ao selecionar um nome
-        document.getElementById("searchBox").addEventListener("input", function() {
+        document.getElementById("searchBox").addEventListener("input", function () {
             let selectedOption = [...document.getElementById("nameList").options].find(option => option.value === this.value);
             if (selectedOption) {
                 buscarFoto(selectedOption.dataset.id);
@@ -160,7 +143,7 @@
         });
 
         // Atualiza a foto ao selecionar um ID
-        document.getElementById("idBox").addEventListener("input", function() {
+        document.getElementById("idBox").addEventListener("input", function () {
             let selectedOption = [...document.getElementById("idList").options].find(option => option.value === this.value);
             if (selectedOption) {
                 buscarFoto(selectedOption.value);
@@ -168,9 +151,7 @@
                 document.getElementById("fotoPessoa").src = "/static/images/default.jpg";
             }
         });
-    </script>
 
-    <script>
         function abrirPortao() {
             alert("Portão aberto manualmente!");
             // Requisição para abrir o portão
@@ -193,9 +174,10 @@
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     id: id,
-                    descricao: descricao })
+                    descricao: descricao
+                })
             })
                 .then(response => response.text())
                 .then(data => alert("Resposta do servidor: " + data))
