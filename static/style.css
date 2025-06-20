@@ -68,6 +68,11 @@ body {
     gap: 1.5rem;
 }
 
+#login-error-message {
+    color: red;
+    font-size: 0.9rem;
+}
+
 .input-group {
     position: relative;
     display: flex;
@@ -507,7 +512,6 @@ textarea {
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 1rem;
-    margin-bottom: 1rem;
 }
 
 textarea {
