@@ -384,7 +384,6 @@ body {
     }
 }
 
-
 /* Menu superior */
 .menu-superior {
     background-color: var(--verde-escuro);
@@ -394,10 +393,6 @@ body {
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Adicione ao seu CSS existente */
-.menu-superior {
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -591,6 +586,7 @@ select:focus {
     border-radius: 5px;
     transition: all 0.2s;
     width: 100%;
+    outline: none;
 }
 
 .input-group input:focus,
@@ -923,23 +919,4 @@ h1 {
 p {
     color: #666;
     font-size: 0.9rem;
-
-}
-
-.input-group:hover {
-    border-color: #2E7D32;
-}
-
-.input-group i {
-    color: var(--verde-militar);
-    margin-right: 10px;
-    font-size: 1rem;
-    left: 15px;
-    transition: all 0.2s ease;
-}
-
-.input-group input {
-    border: none;
-    outline: none;
-    color: #333;
 }
