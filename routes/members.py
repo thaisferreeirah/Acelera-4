@@ -42,19 +42,12 @@ def auth_member_signup():
     photo_file = request.files.get("photo")  # Foto tradicional
     photo_base64 = request.form.get("photoData")  # Foto da câmera
 
-    print(photo_file)
-
     # Validação de CPF
     if len(cpf) != 11:
         return "CPF inválido!", 400
 
     if Authorized.query.filter_by(cpf=cpf).first():
         return "CPF já cadastrado!", 409
-
-    # Cria o registro
-    member = Authorized(authorized_name=auth_name, cpf=cpf)
-    db.session.add(member)
-    db.session.commit()  # Agora o member.authorized_id está disponível
 
     # Salva a imagem da câmera (base64)
     if photo_base64 and photo_base64.startswith("data:image"):
@@ -66,6 +59,14 @@ def auth_member_signup():
     elif photo_file and photo_file.filename != "":
         filename = secure_filename(f"{member.authorized_id}.png")
         photo_file.save(os.path.join("static/images", filename))
+
+    else:
+        return "Adicione uma foto!"
+
+    # Cria o registro
+    member = Authorized(authorized_name=auth_name, cpf=cpf)
+    db.session.add(member)
+    db.session.commit()  # Agora o member.authorized_id está disponível
 
     return redirect(url_for("members.members_page"))
 
