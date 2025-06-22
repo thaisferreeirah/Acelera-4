@@ -1,31 +1,16 @@
-# Para realizar testes sem precisar logar
+from datetime import datetime
+import os
 
-from flask import Blueprint, request, render_template, jsonify, url_for
-from models.user import db
+import psycopg2
+from flask import Blueprint, jsonify, request, url_for
+
 from models.authorized_member import Authorized
 from models.recognition_event import Recognition
-import os
-import psycopg2
-
-from datetime import datetime
+from models.user import db
 
 rectest = Blueprint("recognitiontest", __name__)
 
-# Rota para a página liberarAcesso.html
-@rectest.route('/libacestest')
-def libacestest():
-    return render_template('liberarAcesso.html')
-
-# Rota para a página historico.html
-@rectest.route('/historicotest')
-def historicotest():
-    return render_template('historico.html')
-
-@rectest.route("/cadastrosemlogin")
-def cadastrosemlogin():
-    return render_template("cadastroUsuario.html")
-
-# Ver se o reconhecimento facial consegue buscar as informações do autorizado
+# Verifica se o reconhecimento facial consegue buscar as informações do autorizado
 @rectest.route("/membrosrectest/<int:id>", methods=["GET"])
 def get_memberrectest(id):
     member = Authorized.query.filter_by(authorized_id=id).first()  # Busca pelo authorized_id
@@ -106,7 +91,8 @@ def get_photo(id):
     return jsonify({"foto": url_for('static', filename='images/default.jpg')})  # Foto padrão se não encontrar
 
 
-
+###############################################
+# Cadastrar um usuário
 from models.user import db, User
 
 def cadastrarsemlogin():

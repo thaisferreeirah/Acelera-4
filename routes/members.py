@@ -4,12 +4,15 @@ from models.authorized_member import Authorized
 from helpers import login_required
 from base64 import b64decode
 
+from werkzeug.utils import secure_filename
+import os
+
 members = Blueprint("members", __name__)
 
 @members.route("/autorizado")
 #@login_required
 def members_page():
-    return render_template("cadastro.html")
+    return render_template("autorizado.html")
 
 # Rotas parar membros autorizados
 @members.route("/membros", methods=["GET"])
@@ -26,7 +29,6 @@ def get_members():
             "id": member.authorized_id,
             "name": member.authorized_name,
             "cpf": member.cpf,
-            "photo": member.photo,
             "position": member.position
         })            
     
@@ -37,26 +39,34 @@ def get_members():
 def auth_member_signup():
     auth_name = request.form.get("name")
     cpf = request.form.get("cpf")
-    position = request.form.get("position")
-    photo = request.json
+    photo_file = request.files.get("photo")  # Foto tradicional
+    photo_base64 = request.form.get("photoData")  # Foto da câmera
 
+    # Validação de CPF
     if len(cpf) != 11:
-        print(len(cpf))
         return "CPF inválido!", 400
-    
-    if Authorized.query.filter(Authorized.cpf == cpf).first():
-        return "CPF já cadastrado em outro membro autorizado!", 409
-    
-    # Remover cabeçalho do base64 e converter para binário
-    img_data = b64decode(photo['imagem'].split(',')[1])
 
-    member = Authorized(authorized_name=auth_name, cpf=cpf, position=position)
+    if Authorized.query.filter_by(cpf=cpf).first():
+        return "CPF já cadastrado!", 409
+
+    # Salva a imagem da câmera (base64)
+    if photo_base64 and photo_base64.startswith("data:image"):
+        img_data = b64decode(photo_base64.split(',')[1])
+        with open(f"static/images/{member.authorized_id}.png", "wb") as f:
+            f.write(img_data)
+
+    # Ou salva a imagem selecionada pelo input file
+    elif photo_file and photo_file.filename != "":
+        filename = secure_filename(f"{member.authorized_id}.png")
+        photo_file.save(os.path.join("static/images", filename))
+
+    else:
+        return "Adicione uma foto!"
+
+    # Cria o registro
+    member = Authorized(authorized_name=auth_name, cpf=cpf)
     db.session.add(member)
-    db.session.commit()
-
-    # Salvar com o nome fornecido
-    with open(f"static/images/{member.authorized_id}.png", "wb") as f:
-        f.write(img_data)
+    db.session.commit()  # Agora o member.authorized_id está disponível
 
     return redirect(url_for("members.members_page"))
 
@@ -87,7 +97,8 @@ def update_member(id):
     new_cpf = request.form.get("cpf")
     new_photo = request.form.get("photo")
 
-    if not new_name or not new_cpf or not new_photo:
+    #if not new_name or not new_cpf or not new_photo:
+    if not new_name or not new_cpf:
         return "Preencha todos os campos!", 400
     
     if len(new_cpf) != 11:
@@ -100,7 +111,7 @@ def update_member(id):
     
     member.authorized_name = new_name
     member.cpf = new_cpf
-    member.photo = new_photo
+    #member.photo = new_photo
 
     db.session.commit()
     
@@ -108,7 +119,7 @@ def update_member(id):
             "id": member.authorized_id,
             "name": member.authorized_name,
             "cpf": member.cpf,
-            "photo": member.photo
+            #"photo": member.photo
         }]
 
 @members.route("/membros/delete/<int:id>", methods=["POST"])
