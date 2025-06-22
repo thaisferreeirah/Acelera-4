@@ -29,17 +29,15 @@
             position: relative;
         }
 
-        .btn-close {
-            background-color: #bc5a5a;
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            font-size: 24px;
-            cursor: pointer;
+        .btn-tertiary {
+            background-color: rgb(255, 114, 114);
+            color: var(--verde-escuro);
         }
 
-        .btn-close i {
-            color: #ffffff;
+        .col-acoes {
+            text-align: right;
+            white-space: nowrap;
+            width: 1%;
         }
     </style>
 
@@ -78,8 +76,14 @@
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-users"></i> Autorizados Cadastrados</h2>
-                <input type="text" id="searchStudent" class="form-control" placeholder="Pesquisar autorizado . . ."
-                    style="display: inline-block; width: auto;" oninput="">
+                <div>
+                    <h3 style="display: inline-block; width: auto; margin-right: 10px;">Filtro</h3>
+                    <input type="text" id="filterName" class="form-control" placeholder="Nome"
+                        style="display: inline-block; width: auto;">
+                    <button class="btn btn-primary" onclick="resetFilter()">
+                        <i class="fas fa-eraser"></i> Limpar
+                    </button>
+                </div>
             </div>
 
             <table class="table" id="authorizedTable">
@@ -88,8 +92,8 @@
                         <th>ID</th>
                         <th>Nome</th>
                         <th>CPF</th>
-                        <th></th>
-                        <th></th>
+                        <th class="col-acoes"></th>
+                        <th class="col-acoes"></th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -101,18 +105,12 @@
         <div class="modal-dialog">
             <div class="modal-content card">
 
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar" onclick="fecharModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="card-header">
+                <div class="modal-header card-header">
                     <h2 class="modal-title" id="editarModalLabel"><i class="fas fa-user-edit"></i> Editar Membro</h5>
                 </div>
 
                 <div class="modal-body">
-                    <form id="editForm" method="POST" action="/member/editar" enctype="multipart/form-data">
+                    <form id="editForm" method="POST" enctype="multipart/form-data">
                         <input type="hidden" id="edit-id" name="id">
 
                         <div class="input-group mb-3">
@@ -135,8 +133,9 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Salvar Alterações
                             </button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                Cancelar
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                onclick="fecharModal()">
+                                <i class="fas fa-times"></i> Cancelar
                             </button>
                         </div>
                     </form>
@@ -160,13 +159,13 @@
                                 <td>${member.id ?? ""}</td>
                                 <td>${member.name ?? ""}</td>
                                 <td>${member.cpf ?? ""}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning" onclick="abrirModalEdicao(${member.id}, '${member.name}', '${member.cpf}')">
-                                        <i class="fas fa-edit"></i> Alterar
+                                <td class="col-acoes">
+                                    <button class="btn btn-sm btn-secondary" onclick="abrirModalEdicao(${member.id}, '${member.name}', '${member.cpf}')">
+                                        <i class="fas fa-edit"></i>
                                     </button>
                                 </td>
-                                <td>
-                                    <button class="btn btn-sm btn-danger" onclick="excluirMembro(${member.id})">
+                                <td class="col-acoes">
+                                    <button class="btn btn-sm btn-tertiary" onclick="excluirMembro(${member.id})">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
@@ -183,12 +182,40 @@
             document.getElementById("edit-name").value = name;
             document.getElementById("edit-cpf").value = cpf;
 
+            const form = document.getElementById("editForm");
+            form.action = "/membros/update/" + encodeURIComponent(id);
+
             document.getElementById("editarModal").style.display = "block";
         }
 
         function fecharModal() {
             document.getElementById("editarModal").style.display = "none";
         }
+
+        function aplicarFiltro() {
+            const nomeFiltro = document.getElementById("filterName").value.toLowerCase();
+            const linhas = document.querySelector("#authorizedTable tbody").getElementsByTagName("tr");
+
+            for (let i = 0; i < linhas.length; i++) {
+                const colunas = linhas[i].getElementsByTagName("td");
+                const nomeLinha = colunas[1]?.textContent.trim().toLowerCase();
+
+                const correspondeNome = nomeLinha.includes(nomeFiltro);
+                linhas[i].style.display = correspondeNome ? "" : "none";
+            }
+        }
+
+        function resetFilter() {
+            const linhas = document.querySelector("#authorizedTable tbody").getElementsByTagName("tr");
+
+            for (let i = 0; i < linhas.length; i++) {
+                linhas[i].style.display = "";
+            }
+
+            document.getElementById("filterName").value = "";
+        }
+
+        document.getElementById("filterName").addEventListener("input", aplicarFiltro);
 
         document.addEventListener("DOMContentLoaded", function () {
             carregarMembros();

@@ -9,7 +9,7 @@ members = Blueprint("members", __name__)
 @members.route("/autorizado")
 #@login_required
 def members_page():
-    return render_template("cadastro.html")
+    return render_template("autorizado.html")
 
 # Rotas parar membros autorizados
 @members.route("/membros", methods=["GET"])
@@ -86,7 +86,8 @@ def update_member(id):
     new_cpf = request.form.get("cpf")
     new_photo = request.form.get("photo")
 
-    if not new_name or not new_cpf or not new_photo:
+    #if not new_name or not new_cpf or not new_photo:
+    if not new_name or not new_cpf:
         return "Preencha todos os campos!", 400
     
     if len(new_cpf) != 11:
@@ -99,7 +100,7 @@ def update_member(id):
     
     member.authorized_name = new_name
     member.cpf = new_cpf
-    member.photo = new_photo
+    #member.photo = new_photo
 
     db.session.commit()
     
@@ -107,7 +108,7 @@ def update_member(id):
             "id": member.authorized_id,
             "name": member.authorized_name,
             "cpf": member.cpf,
-            "photo": member.photo
+            #"photo": member.photo
         }]
 
 @members.route("/membros/delete/<int:id>", methods=["POST"])
