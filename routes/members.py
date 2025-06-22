@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for
+from flask import Blueprint, request, render_template, redirect, url_for, jsonify
 from models.user import db
 from models.authorized_member import Authorized
 from helpers import login_required
@@ -91,36 +91,43 @@ def update_member(id):
     member = Authorized.query.get(id)
 
     if not member:
-        return "Não encontrado!", 404
-    
+        return jsonify({"message": "Não encontrado!"}), 404
+
     new_name = request.form.get("name")
     new_cpf = request.form.get("cpf")
-    new_photo = request.form.get("photo")
+    photo_file = request.files.get("photo")  # imagem tradicional
+    photo_base64 = request.form.get("photoData")  # imagem da câmera
 
-    #if not new_name or not new_cpf or not new_photo:
     if not new_name or not new_cpf:
-        return "Preencha todos os campos!", 400
-    
+        return jsonify({"message": "Preencha todos os campos!"}), 400
+
     if len(new_cpf) != 11:
-        print(len(new_cpf))
-        return "CPF inválido!", 400
-    
-    # Verifica se o novo CPF pertence a alguém já cadastrado
-    if Authorized.query.filter(Authorized.cpf == new_cpf, member.authorized_id != id).first():
-        return "CPF já cadastrado em outro membro autorizado!", 409
-    
+        return jsonify({"message": "CPF inválido!"}), 400
+
+    # Verifica se o novo CPF já pertence a outro autorizado
+    if Authorized.query.filter(Authorized.cpf == new_cpf, Authorized.authorized_id != id).first():
+        return jsonify({"message": "CPF já cadastrado em outro membro autorizado!"}), 409
+
+    # Atualiza os dados
     member.authorized_name = new_name
     member.cpf = new_cpf
-    #member.photo = new_photo
+
+    # Salva a nova imagem (caso enviada)
+    if photo_base64 and photo_base64.startswith("data:image"):
+        from base64 import b64decode
+        img_data = b64decode(photo_base64.split(',')[1])
+        with open(f"static/images/{member.authorized_id}.png", "wb") as f:
+            f.write(img_data)
+
+    elif photo_file and photo_file.filename != "":
+        from werkzeug.utils import secure_filename
+        import os
+        filename = secure_filename(f"{member.authorized_id}.png")
+        photo_file.save(os.path.join("static/images", filename))
 
     db.session.commit()
-    
-    return [{
-            "id": member.authorized_id,
-            "name": member.authorized_name,
-            "cpf": member.cpf,
-            #"photo": member.photo
-        }]
+
+    return jsonify({"message": "Alterações salvas com sucesso!"}), 200
 
 @members.route("/membros/delete/<int:id>", methods=["POST"])
 #@login_required

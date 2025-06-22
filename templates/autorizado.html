@@ -93,6 +93,66 @@
             border-radius: 5px;
         }
 
+        #avatarPreviewWrapper:hover .overlay {
+            opacity: 1;
+        }
+
+        #edit-avatarContainer {
+            width: 165px;
+            height: 165px;
+            text-align: center;
+            align-items: center;
+        }
+
+        #edit-avatarPreview i {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5em;
+            width: 165px;
+            height: 165px;
+            border-radius: 5px;
+            border: #2C3E21 solid 1px;
+            color: #ccc;
+        }
+
+        #edit-avatarPreview img {
+            width: 165px;
+            height: 165px;
+            border-radius: 5px;
+            border: #2C3E21 solid 1px;
+            object-fit: cover;
+        }
+
+        #edit-avatarPreviewWrapper {
+            position: relative;
+            width: 165px;
+            height: 165px;
+        }
+
+        #edit-avatarPreview {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: #ddd solid 1px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        #edit-avatarPreview img,
+        #edit-avatarPreview i {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        #edit-avatarPreviewWrapper:hover .overlay {
+            opacity: 1;
+        }
+
         .overlay {
             position: absolute;
             top: 0;
@@ -111,10 +171,6 @@
 
         .overlay i {
             font-size: 2em;
-        }
-
-        #avatarPreviewWrapper:hover .overlay {
-            opacity: 1;
         }
 
         .menu-popup {
@@ -173,6 +229,14 @@
         }
 
         #stream {
+            border-radius: 5px;
+            border: #2C3E21 solid 1px;
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #edit-stream {
             border-radius: 5px;
             border: #2C3E21 solid 1px;
             max-width: 100%;
@@ -265,42 +329,62 @@
     </main>
 
     <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content card">
-
                 <div class="modal-header card-header">
-                    <h2 class="modal-title" id="editarModalLabel"><i class="fas fa-user-edit"></i> Editar Autorizado
+                    <h2 class="modal-title" id="editarModalLabel">
+                        <i class="fas fa-user-edit"></i> Editar Autorizado
                     </h2>
                 </div>
 
                 <div class="modal-body">
-                    <form id="editForm" method="POST" enctype="multipart/form-data">
+                    <form id="editForm" method="POST" enctype="multipart/form-data"
+                        style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
                         <input type="hidden" id="edit-id" name="id">
+                        <input type="hidden" id="edit-photoData" name="photoData">
 
-                        <div class="input-group mb-3">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                            <input type="text" id="edit-name" name="name" class="form-control" placeholder="Nome"
-                                required>
+                        <!-- Avatar + Foto -->
+                        <div id="edit-avatarContainer">
+                            <div id="edit-avatarPreviewWrapper">
+                                <div id="edit-avatarPreview">
+                                    <i class="fas fa-user fa-5x" style="color: #ccc;"></i>
+                                </div>
+                                <div class="overlay">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                            </div>
+
+                            <div id="edit-avatarMenu" style="display: none;" class="menu-popup">
+                                <button type="button" onclick="editAbrirGaleria()">Selecionar foto</button>
+                                <button type="button" onclick="editTirarFoto()">Tirar foto</button>
+                            </div>
+
+                            <input type="file" id="edit-photo" name="photo" accept="image/*" style="display: none;">
                         </div>
 
-                        <div class="input-group mb-3">
-                            <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                            <input type="text" id="edit-cpf" name="cpf" class="form-control" placeholder="CPF" required>
-                        </div>
+                        <!-- Dados de edição -->
+                        <div style="flex: 1; min-width: 250px;">
+                            <div class="input-group mb-3">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="edit-name" name="name" class="form-control" placeholder="Nome"
+                                    required>
+                            </div>
 
-                        <div class="input-group mb-3">
-                            <span class="input-group-text"><i class="fas fa-camera"></i></span>
-                            <input type="file" id="edit-photo" name="photo" class="form-control" accept="image/*">
-                        </div>
+                            <div class="input-group mb-3">
+                                <i class="fas fa-id-card"></i>
+                                <input type="text" id="edit-cpf" name="cpf" class="form-control" placeholder="CPF"
+                                    required>
+                            </div>
 
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Salvar alterações
-                            </button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                onclick="fecharEdicaoModal()">
-                                <i class="fas fa-times"></i> Cancelar
-                            </button>
+                            <div class="modal-footer px-0">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Salvar alterações
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    onclick="fecharEdicaoModal()">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -332,12 +416,37 @@
         </div>
     </div>
 
+    <div id="edit-cameraModal" class="modal" style="display: none;">
+        <div class="modal-content card">
+            <div class="modal-header card-header">
+                <h2 class="modal-title" id="editarModalLabel">
+                    <i class="fas fa-user-edit"></i> Capturar Foto
+                </h2>
+            </div>
+
+            <!-- Novo contêiner para imagem e botões -->
+            <div class="modal-body">
+                <img id="edit-stream" />
+
+                <div class="button-group" style="margin-top: 20px; text-align: center;">
+                    <button class="btn btn-primary" onclick="editCapturarFoto()">
+                        <i class="fas fa-camera"></i> Capturar
+                    </button>
+                    <button class="btn btn-secondary" onclick="editFecharCameraModal()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <canvas id="canvas" style="display:none;"></canvas>
 
     <script>
         var socket = io.connect("{{ api_url }}");
         socket.on('stream_raw', function (frame) {
             document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+            document.getElementById('edit-stream').src = "data:image/jpeg;base64," + frame;
         });
 
         socket.on('connect', function () {
@@ -348,6 +457,7 @@
         socket.on('stream', function (frame) {
             console.log("Frame recebido!");  // Deve aparecer no console
             document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+            document.getElementById('edit-stream').src = "data:image/jpeg;base64," + frame;
         });
 
         socket.on('disconnect', function () {
@@ -434,6 +544,30 @@
             const form = document.getElementById("editForm");
             form.action = "/membros/update/" + encodeURIComponent(id);
 
+            // Tenta carregar imagem com várias extensões
+            const editAvatarPreview = document.getElementById("edit-avatarPreview");
+            const extensoes = ["png", "jpeg", "jpg"];
+            let imagemEncontrada = false;
+
+            for (let i = 0; i < extensoes.length; i++) {
+                const src = `/static/images/${id}.${extensoes[i]}`;
+                const img = new Image();
+                img.src = src;
+
+                img.onload = function () {
+                    if (!imagemEncontrada) {
+                        editAvatarPreview.innerHTML = `<img src="${src}" style="max-width: 200px; border-radius: 5px;">`;
+                        imagemEncontrada = true;
+                    }
+                };
+
+                img.onerror = function () {
+                    if (i === extensoes.length - 1 && !imagemEncontrada) {
+                        editAvatarPreview.innerHTML = `<i class="fas fa-user fa-5x" style="color: #ccc;"></i>`;
+                    }
+                };
+            }
+
             document.getElementById("editarModal").style.display = "block";
         }
 
@@ -498,6 +632,103 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             carregarMembros();
+        });
+    </script>
+
+    <script>
+        const editPhotoInput = document.getElementById('edit-photo');
+        const editAvatarPreview = document.getElementById('edit-avatarPreview');
+        const editDefaultIcon = `<i class="fas fa-user fa-5x"></i>`;
+
+        editPhotoInput.addEventListener('change', function (event) {
+            const editFile = event.target.files[0];
+            if (editFile) {
+                const editReader = new FileReader();
+                editReader.onload = function (e) {
+                    editAvatarPreview.innerHTML = `<img src="${e.target.result}">`;
+                };
+                editReader.readAsDataURL(editFile);
+            }
+        });
+
+        const editAvatarWrapper = document.getElementById('edit-avatarPreviewWrapper');
+        const editMenu = document.getElementById('edit-avatarMenu');
+        const editInputPhoto = document.getElementById('edit-photo');
+
+        editAvatarWrapper.addEventListener('click', () => {
+            editMenu.style.display = editMenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        function editAbrirGaleria() {
+            editMenu.style.display = 'none';
+            editInputPhoto.click();
+        }
+
+        // Esconde o menu se clicar fora
+        document.addEventListener('click', function (e) {
+            if (!editAvatarWrapper.contains(e.target) && !editMenu.contains(e.target)) {
+                editMenu.style.display = 'none';
+            }
+        });
+
+        document.querySelector('form').addEventListener('reset', function () {
+            editAvatarPreview.innerHTML = defaultIcon;
+        });
+
+        function editTirarFoto() {
+            editMenu.style.display = 'none';
+            document.getElementById('edit-cameraModal').style.display = 'block';
+        }
+
+        function editFecharCameraModal() {
+            document.getElementById('edit-cameraModal').style.display = 'none';
+        }
+
+        function editCapturarFoto() {
+            const editFeed = document.getElementById('edit-stream');
+
+            // Cria um canvas e desenha a imagem
+            const editCanvas = document.createElement('canvas');
+            editCanvas.width = editFeed.width;
+            editCanvas.height = editFeed.height;
+
+            const editCtx = editCanvas.getContext('2d');
+            editCtx.drawImage(editFeed, 0, 0, editCanvas.width, editCanvas.height);
+
+            // Converte para DataURL e exibe no avatar
+            const editFotoDataURL = editCanvas.toDataURL('image/jpeg');
+            editAvatarPreview.innerHTML = `<img src="${editFotoDataURL}">`;
+
+            // Salva temporariamente (você pode armazenar isso num campo escondido)
+            document.getElementById('edit-photoData').value = editFotoDataURL;
+
+            editFecharCameraModal();
+        }
+
+        document.getElementById("editForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // impede envio tradicional
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST",
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(msg => { throw new Error(msg); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message); // ou exibir com um toast!
+                    fecharEdicaoModal();
+                    carregarMembros(); // recarrega a tabela
+                })
+                .catch(error => {
+                    alert("Erro ao salvar: " + error.message);
+                });
         });
     </script>
     <script src="../static/js/script.js"></script>
