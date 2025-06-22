@@ -31,6 +31,6 @@ def student_signup():
     db.session.add(student)
     db.session.commit()
 
-    return redirect(url_for("students.student"))
+    return redirect(url_for("student.student"))
 
 # TODO: criar método para listar alunos cadastrados
