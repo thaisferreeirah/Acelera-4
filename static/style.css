@@ -78,10 +78,10 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 5px 15px;
+    margin-bottom: 10px;
     transition: border-color 0.2s;
     transition: all 0.2s ease;
 }
@@ -606,6 +606,7 @@ select:focus {
 
 .input-group i {
     color: var(--verde-militar);
+    width: 10px;
     margin-right: 10px;
     font-size: 1rem;
     left: 15px;
@@ -689,11 +690,11 @@ select:focus {
 }
 
 /* FEEDBACK VISUAL PARA CAMPOS VÁLIDOS/INVÁLIDOS */
-input:valid {
+.input-group:valid {
     border-left: 3px solid var(--verde-limao);
 }
 
-input:invalid:not(:placeholder-shown) {
+.input-group:invalid:not(:placeholder-shown) {
     border-left: 3px solid #ff6b6b;
 }
 

@@ -26,7 +26,6 @@ def get_members():
             "id": member.authorized_id,
             "name": member.authorized_name,
             "cpf": member.cpf,
-            "photo": member.photo,
             "position": member.position
         })            
     

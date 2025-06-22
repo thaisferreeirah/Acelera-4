@@ -1,12 +1,14 @@
-from flask import Blueprint, request, render_template
-import config
-import cv2
-import requests
 import base64
-import threading
-import face_recognition
 import os
+import threading
 import time
+
+import cv2
+import face_recognition
+import requests
+
+import config
+from flask import Blueprint, request, render_template
 from routes.websocket import websocketio
 
 esp = Blueprint("esp", __name__)
@@ -15,7 +17,13 @@ ESP32_WROOM_URL = "http://esp32wroom.local/activate"
 ESP32_CAM_URL = "http://esp32cam.local:81/stream"
 FLASK_SERVER_URL = config.FLASK_URL
 
-import time
+@esp.route('/takephoto')
+def takephoto():
+    return render_template('takephoto.html')
+
+@esp.route('/reconhecimentoDisplay')
+def reconhecimentoDisplay():
+    return render_template('reconhecimentoDisplay.html')  # Novo nome do HTML
 
 ultimo_reconhecimento = 0  # Tempo da última ativação
 COOLDOWN_TIME = 3  # Tempo mínimo entre ativações (segundos)
@@ -106,31 +114,6 @@ def disable_recognition():
 @websocketio.on('connect')
 def handle_connect():
     print("Cliente conectado!")  # Isso deve aparecer no terminal do Flask
-
-# Acho que pode apagar, vou testar
-@esp.route('/recognition', methods=['POST'])
-def recognition():
-    data = request.json  # Recebe dados JSON do ESP32-CAM
-    if data and data.get("recognized") == True:
-        person_name = data.get("name")
-        print(f"Rosto reconhecido: {person_name}")
-
-        # Enviar comando para ESP32-WROOM ativar o motor
-        requests.get(ESP32_WROOM_URL)
-
-        return {"status": "motor activated"}, 200
-
-    return {"status": "no recognition"}, 400
-
-# Rota para a página takephoto.html
-@esp.route('/takephoto')
-def takephoto():
-    return render_template('takephoto.html')
-
-# Rota para a página recognition.html
-@esp.route('/recognition_page')
-def recognition_page():
-    return render_template('recognition.html')  # Novo nome do HTML
 
 # Salva a foto
 @esp.route('/save_photo', methods=['POST'])
