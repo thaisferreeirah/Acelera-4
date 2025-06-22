@@ -4,6 +4,9 @@ from models.authorized_member import Authorized
 from helpers import login_required
 from base64 import b64decode
 
+from werkzeug.utils import secure_filename
+import os
+
 members = Blueprint("members", __name__)
 
 @members.route("/autorizado")
@@ -36,26 +39,33 @@ def get_members():
 def auth_member_signup():
     auth_name = request.form.get("name")
     cpf = request.form.get("cpf")
-    position = request.form.get("position")
-    photo = request.json
+    photo_file = request.files.get("photo")  # Foto tradicional
+    photo_base64 = request.form.get("photoData")  # Foto da câmera
 
+    print(photo_file)
+
+    # Validação de CPF
     if len(cpf) != 11:
-        print(len(cpf))
         return "CPF inválido!", 400
-    
-    if Authorized.query.filter(Authorized.cpf == cpf).first():
-        return "CPF já cadastrado em outro membro autorizado!", 409
-    
-    # Remover cabeçalho do base64 e converter para binário
-    img_data = b64decode(photo['imagem'].split(',')[1])
 
-    member = Authorized(authorized_name=auth_name, cpf=cpf, position=position)
+    if Authorized.query.filter_by(cpf=cpf).first():
+        return "CPF já cadastrado!", 409
+
+    # Cria o registro
+    member = Authorized(authorized_name=auth_name, cpf=cpf)
     db.session.add(member)
-    db.session.commit()
+    db.session.commit()  # Agora o member.authorized_id está disponível
 
-    # Salvar com o nome fornecido
-    with open(f"static/images/{member.authorized_id}.png", "wb") as f:
-        f.write(img_data)
+    # Salva a imagem da câmera (base64)
+    if photo_base64 and photo_base64.startswith("data:image"):
+        img_data = b64decode(photo_base64.split(',')[1])
+        with open(f"static/images/{member.authorized_id}.png", "wb") as f:
+            f.write(img_data)
+
+    # Ou salva a imagem selecionada pelo input file
+    elif photo_file and photo_file.filename != "":
+        filename = secure_filename(f"{member.authorized_id}.png")
+        photo_file.save(os.path.join("static/images", filename))
 
     return redirect(url_for("members.members_page"))
 

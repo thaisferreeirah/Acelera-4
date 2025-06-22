@@ -7,6 +7,7 @@
     <title>Autorizados - Entr.ai</title>
     <link rel="stylesheet" href="../static/fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="../static/style.css">
+    <script src="../static/js/socket.io.js"></script>
     <style>
         .modal {
             display: none;
@@ -153,8 +154,9 @@
             <div class="card-header">
                 <h2><i class="fas fa-user-plus"></i> Cadastrar Autorizado</h2>
             </div>
-            <form id="authorizedForm" action="/member/cadastro" method="POST"
+            <form id="authorizedForm" action="/membros" method="POST" enctype="multipart/form-data"
                 style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
+                <input type="hidden" id="photoData" name="photoData">
                 <div id="avatarContainer">
                     <div id="avatarPreviewWrapper">
                         <div id="avatarPreview">
@@ -167,8 +169,8 @@
 
                     <!-- Menu de opções -->
                     <div id="avatarMenu" style="display: none;" class="menu-popup">
-                        <button onclick="abrirGaleria()">Selecionar foto</button>
-                        <button onclick="tirarFoto()">Tirar foto</button>
+                        <button type="button" onclick="abrirGaleria()">Selecionar foto</button>
+                        <button type="button" onclick="tirarFoto()">Tirar foto</button>
                     </div>
 
                     <input type="file" id="photo" name="photo" accept="image/*" style="display: none;">
@@ -261,10 +263,41 @@
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
+
+    <div id="cameraModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="fecharCameraModal()">&times;</span>
+            <h3>Capturar Foto</h3>
+            <img id="stream" />
+            <button onclick="capturarFoto()">Capturar</button>
+        </div>
+    </div>
+
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        var socket = io.connect("{{ api_url }}");
+        socket.on('stream_raw', function (frame) {
+            document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+        });
+
+        socket.on('connect', function () {
+            console.log("Conectado ao WebSocket!");
+            socket.emit('start_stream');  // Aqui o evento é disparado para o servidor
+        });
+
+        socket.on('stream', function (frame) {
+            console.log("Frame recebido!");  // Deve aparecer no console
+            document.getElementById('stream').src = "data:image/jpeg;base64," + frame;
+        });
+
+        socket.on('disconnect', function () {
+            console.log("WebSocket desconectado!");
+        });
+    </script>
 
     <script>
         const photoInput = document.getElementById('photo');
@@ -306,7 +339,6 @@
                 menu.style.display = 'none';
             }
         });
-
 
         document.querySelector('form').addEventListener('reset', function () {
             avatarPreview.innerHTML = defaultIcon;
@@ -379,6 +411,36 @@
             }
 
             document.getElementById("filterName").value = "";
+        }
+
+        function tirarFoto() {
+            menu.style.display = 'none';
+            document.getElementById('cameraModal').style.display = 'block';
+        }
+
+        function fecharCameraModal() {
+            document.getElementById('cameraModal').style.display = 'none';
+        }
+
+        function capturarFoto() {
+            const feed = document.getElementById('stream');
+
+            // Cria um canvas e desenha a imagem
+            const canvas = document.createElement('canvas');
+            canvas.width = feed.width;
+            canvas.height = feed.height;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(feed, 0, 0, canvas.width, canvas.height);
+
+            // Converte para DataURL e exibe no avatar
+            const fotoDataURL = canvas.toDataURL('image/jpeg');
+            avatarPreview.innerHTML = `<img src="${fotoDataURL}" style="width:100%; border-radius: 5px;">`;
+
+            // Salva temporariamente (você pode armazenar isso num campo escondido)
+            document.getElementById('photoData').value = fotoDataURL;
+
+            fecharCameraModal();
         }
 
         document.getElementById("filterName").addEventListener("input", aplicarFiltro);
