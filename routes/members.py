@@ -39,36 +39,40 @@ def get_members():
 def auth_member_signup():
     auth_name = request.form.get("name")
     cpf = request.form.get("cpf")
-    photo_file = request.files.get("photo")  # Foto tradicional
-    photo_base64 = request.form.get("photoData")  # Foto da câmera
+    photo_file = request.files.get("photo")
+    photo_base64 = request.form.get("photoData")
 
-    # Validação de CPF
+    if not auth_name or not cpf:
+        return jsonify({"message": "Preencha todos os campos!"}), 400
+
     if len(cpf) != 11:
-        return "CPF inválido!", 400
+        return jsonify({"message": "CPF inválido!"}), 400
 
     if Authorized.query.filter_by(cpf=cpf).first():
-        return "CPF já cadastrado!", 409
+        return jsonify({"message": "CPF já cadastrado!"}), 409
 
-    # Salva a imagem da câmera (base64)
-    if photo_base64 and photo_base64.startswith("data:image"):
-        img_data = b64decode(photo_base64.split(',')[1])
-        with open(f"static/images/{member.authorized_id}.png", "wb") as f:
-            f.write(img_data)
-
-    # Ou salva a imagem selecionada pelo input file
-    elif photo_file and photo_file.filename != "":
-        filename = secure_filename(f"{member.authorized_id}.png")
-        photo_file.save(os.path.join("static/images", filename))
-
-    else:
-        return "Adicione uma foto!"
+    # Verifique a existência da imagem antes de criar o registro
+    if not ((photo_base64 and photo_base64.startswith("data:image")) or (photo_file and photo_file.filename != "")):
+        return jsonify({"message": "Adicione uma foto!"}), 400
 
     # Cria o registro
     member = Authorized(authorized_name=auth_name, cpf=cpf)
     db.session.add(member)
-    db.session.commit()  # Agora o member.authorized_id está disponível
+    db.session.commit()
 
-    return redirect(url_for("members.members_page"))
+    # Agora salva a imagem
+    if photo_base64 and photo_base64.startswith("data:image"):
+        from base64 import b64decode
+        img_data = b64decode(photo_base64.split(',')[1])
+        with open(f"static/images/{member.authorized_id}.png", "wb") as f:
+            f.write(img_data)
+    elif photo_file and photo_file.filename != "":
+        from werkzeug.utils import secure_filename
+        import os
+        filename = secure_filename(f"{member.authorized_id}.png")
+        photo_file.save(os.path.join("static/images", filename))
+
+    return jsonify({"message": "Autorizado cadastrado com sucesso!"}), 200
 
 @members.route("/membros/<int:id>", methods=["GET"])
 #@login_required
@@ -130,13 +134,26 @@ def update_member(id):
     return jsonify({"message": "Alterações salvas com sucesso!"}), 200
 
 @members.route("/membros/delete/<int:id>", methods=["POST"])
-#@login_required
 def delete_member(id):
+    import os
+    import glob
+
     member = Authorized.query.get(id)
 
     if not member:
         return "Membro não encontrado", 404
-    
+
+    # Caminhos possíveis para a imagem (jpg, jpeg, png)
+    padrao_imagem = f"static/images/{member.authorized_id}.*"
+    arquivos = glob.glob(padrao_imagem)
+
+    # Remove todos os arquivos encontrados com esse ID
+    for caminho in arquivos:
+        try:
+            os.remove(caminho)
+        except Exception as e:
+            return f"Erro ao excluir imagem: {str(e)}", 500
+
     db.session.delete(member)
     db.session.commit()
 
