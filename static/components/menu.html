@@ -1,12 +1,18 @@
-<nav class="menu-superior">
+<button id="btn-toggle-menu" class="menu-toggle" onclick="toggleMenu()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<nav id="menu-superior" class="menu-superior">
     <div class="logo-menu">
-        <img src="../static/pictures/LogoClaro.png" style="width: 100px; height: auto;" alt="Logo">
+        <img src="../static/pictures/LogoClaro.png" style="width: 100px;" alt="Logo">
+    </div>
+    <div>
+        <h3 id="status-reconhecimento"><i class="fas fa-camera"></i> Reconhecimento: carregando...</h3>
     </div>
     <ul class="itens-menu">
         <li><a href="/"><i class="fas fa-home"></i></a></li>
-        <li><a href="/historico"><i class="fas fa-history"></i> Histórico</a></li>
         <li><a href="/autorizado"><i class="fas fa-users"></i> Autorizados</a></li>
-        <li><a href="/acesso"><i class="fas fa-user-check"></i> Liberar Acesso</a></li>
+        <li><a href="/acesso"><i class="fas fa-user-check"></i> Acessos</a></li>
         <li><a href="/cadastro"><i class="fas fa-user-plus"></i> Cadastro Usuário</a></li>
         <li><a href="/lista-cadastros"><i class="fas fa-list"></i> Lista de Cadastros</a></li>
         <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>

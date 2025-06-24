@@ -14,17 +14,16 @@ main = Blueprint("main", __name__)
 @login_required
 def index():
      return render_template("index.html")
-     
+
 @main.route("/historico")
 @login_required
 def historico():
       return render_template("historico.html")
-       
 
 @main.route('/acesso')
 @login_required
-def liberar_acesso():
-    return render_template('liberarAcesso.html')
+def acesso():
+    return render_template('acesso.html')
 
 @main.route("/lista-cadastros")
 @login_required

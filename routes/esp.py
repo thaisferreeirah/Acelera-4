@@ -101,12 +101,14 @@ def handle_start_stream():
 # Habilita o reconhecimento facial
 @websocketio.on('enable_recognition')
 def enable_recognition():
+    print("Reconhecimento ativado")
     global reconhecimento_ativo
     reconhecimento_ativo = True
 
-# Desabilita o queconhecimento facial
+# Desabilita o reconhecimento facial
 @websocketio.on('disable_recognition')
 def disable_recognition():
+    print("Reconhecimento desativado")
     global reconhecimento_ativo
     reconhecimento_ativo = False
 

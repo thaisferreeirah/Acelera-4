@@ -4,16 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Acesso - Escola</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Acessos - Entr.ai</title>
+    <link rel="stylesheet" href="../static/fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="../static/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="../static/js/socket.io.js"></script>
     <style>
         #stream {
             width: 200px;
             height: 200px;
             object-fit: cover;
-            /* Ajusta a imagem sem distorcer */
             border: 1px solid #000000;
             border-radius: 10px;
         }
@@ -26,74 +25,192 @@
             border-radius: 10px;
         }
 
-        .manual-container {
+        .top-cards {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .card-menor {
+            flex: 0 0 30%;
+            min-width: 270px;
+        }
+
+        .top-cards .card:not(.card-menor) {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .top-cards {
+                flex-direction: column;
+            }
+
+            .card-menor,
+            .top-cards .card:not(.card-menor) {
+                flex: 1 1 100%;
+            }
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .form-controle {
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* centraliza os itens horizontalmente */
-            gap: 1rem;
-            /* espaço entre os elementos */
+            gap: 10px;
+            text-align: center;
+        }
+
+        .form-controle button {
+            width: 240px;
+            font-weight: bold;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            /* centraliza os formulários horizontalmente */
+        }
+
+        .form-row .form-group {
+            flex: 1 1 45%;
+            /* ocupa até 45% do espaço, quebra se necessário */
+        }
+
+        .form-foto {
+            min-width: 200px;
+            max-width: 150px;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .form-input {
+            min-width: 260px;
+        }
+
+        .form-input input,
+        .form-input textarea {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .form-input button {
+            margin-right: 10px;
+            /* se quiser separar os botões também */
+        }
+
+        .table-container {
+            width: 100%;
+            max-height: 60vh;
+            overflow-x: auto;
+            overflow-y: auto;
+        }
+
+        .btn-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-toggle.ativado {
+            background-color: #28a745;
+            /* Verde */
+        }
+
+        .btn-toggle.desativado {
+            background-color: #dc3545;
+            /* Vermelho */
+        }
+
+        .btn-toggle:hover {
+            transform: scale(1.02);
         }
     </style>
 </head>
 
 <body>
     <div id="menu-container"></div>
-    <script src="../static/js/script.js"></script>
 
     <div class="main-content">
-        <div class="card">
-            <div class="card-header">
-                <h2><i class="fas fa-door-open"></i> Controle de Acesso Manual</h2>
+        <div class="top-cards">
+            <div class="card card-menor">
+                <div class="card-header">
+                    <h2><i class="fas fa-door-open"></i> Controle de Acesso</h2>
+                </div>
+
+                <div class="form-group form-controle">
+                    <img id="stream" />
+                    <button id="reconhecimentoBtn" class="btn-toggle desativado" onclick="toggleReconhecimento()">
+                        <i class="fas fa-toggle-off"></i> Reconhecimento facial: Desativado
+                    </button>
+                    <button class="btn btn-primary" onclick="abrirPortao()">
+                        <i class="fas fa-door-open"></i> Abrir Portão
+                    </button>
+                </div>
             </div>
 
-            <div class="grupo-formulario">
-                <img id="stream" />
-                <img id="fotoPessoa" src="static/images/default.jpg" alt="Foto do usuário"><br><br>
-                <button class="btn btn-primary" onclick="abrirPortao()">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-door-open"></i> Registrar Acesso Manual</h2>
+                </div>
 
-                    <i class="fas fa-door-open"></i> Abrir Portão
-                </button>
-            </div><br>
+                <div class="form-row">
+                    <div class="form-group form-foto">
+                        <img id="fotoPessoa" src="static/images/default.jpg" alt="Foto do usuário">
+                    </div>
 
-            <h3><i class="fas fa-user-plus"></i> Registrar Entrada</h3><br>
-            <div class="grupo-formulario">
-  <input list="nameList" id="searchBox" placeholder="Digite ou selecione um nome"><br>
-  <datalist id="nameList"></datalist><br>
-  
-  <input list="idList" id="idBox" placeholder="Digite ou selecione um ID"><br><br>
-  <datalist id="idList"></datalist>
-</div>
+                    <div class="form-group form-input">
+                        <input list="nameList" id="searchBox" placeholder="Digite ou selecione um nome">
+                        <datalist id="nameList"></datalist>
 
-            <div class="grupo-formulario">
-                <textarea id="descricao" placeholder="Motivo da entrada"></textarea>
-            </div><br>
+                        <input list="idList" id="idBox" placeholder="Digite ou selecione um ID">
+                        <datalist id="idList"></datalist>
 
-            <button class="btn btn-secondary" onclick="registrarEntrada()">
-                <i class="fas fa-save"></i> Registrar Entrada
-            </button>
-            <button class="btn btn-secondary" onclick="limparCampos()">
-                <i class="fas"></i> Limpar
-            </button>
+                        <textarea id="descricao" placeholder="Motivo da entrada"></textarea>
+                        <button class="btn btn-primary" onclick="registrarEntrada()">
+                            <i class="fas fa-save"></i> Registrar
+                        </button>
+                        <button class="btn btn-secondary" onclick="limparCampos()">
+                            <i class="fas fa-eraser"></i> Limpar
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="cartao">
-            <div class="cabecalho-cartao">
+        <div class="card">
+            <div class="card-header">
                 <h2><i class="fas fa-history"></i> Histórico de Acessos</h2>
             </div>
 
-            <table class="tabela">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Hora</th>
-                        <th>Nome</th>
-                        <th>Método</th>
-                        <th>Descrição</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-registros"></tbody>
-            </table>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Nome</th>
+                            <th>Método</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-registros"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
