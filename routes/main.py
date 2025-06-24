@@ -1,12 +1,7 @@
-from flask import Blueprint, render_template, request, jsonify, url_for
-from datetime import datetime
-import psycopg2
-import os
+from flask import Blueprint, render_template, request
 from helpers import login_required
 from models.user import User
-from models.authorized_member import Authorized
-from models.recognition_event import Recognition
-from db import db
+
 
 main = Blueprint("main", __name__)
 
@@ -18,8 +13,8 @@ def index():
 @main.route("/historico")
 @login_required
 def historico():
-      return render_template("historico.html")
-       
+    return render_template("historico.html")
+
 @main.route('/acesso')
 @login_required
 def liberar_acesso():
@@ -28,10 +23,20 @@ def liberar_acesso():
 @main.route("/usuarios")
 @login_required
 def get_users():
-    users = User.query.all()
+    name_filter = request.args.get("name")
+    access_level_filter = request.args.get("access_level")
+
+    filters = []
+    if name_filter:
+        filters.append(User.username.ilike(f"%{name_filter}%"))
+    if access_level_filter:
+        filters.append(User.access_level.ilike(f"%{access_level_filter}%"))
+
+    # O * envia os filtros da lista filters como argumentos separados, para a pesquisa funcionar de forma dinamica
+    users = User.query.filter(*filters).all()
 
     if not users:
-        return "Nenhum membro autorizado encontrado!", 404
+        return "Nenhum usuário encontrado!", 404
 
     user_list = []
     for user in users:
