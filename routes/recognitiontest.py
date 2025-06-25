@@ -2,13 +2,17 @@ from datetime import datetime
 import os
 
 import psycopg2
-from flask import Blueprint, jsonify, request, url_for
+from flask import Blueprint, jsonify, request, url_for, render_template
 
 from models.authorized_member import Authorized
 from models.recognition_event import Recognition
 from models.user import db
 
 rectest = Blueprint("recognitiontest", __name__)
+
+@rectest.route('/lista-cadastros')
+def acesso():
+    return render_template('lista_cadastros.html')
 
 # Verifica se o reconhecimento facial consegue buscar as informações do autorizado
 @rectest.route("/membrosrectest/<int:id>", methods=["GET"])

@@ -24,10 +24,10 @@ def login():
     else:
         return "Credenciais incorretas", 401
 
-@auth.route("/cadastro")
+@auth.route("/usuario")
 @login_required
 def signupg():
-    return render_template("cadastroUsuario.html")
+    return render_template("usuario.html")
 
 @auth.route("/cadastro", methods=["POST"])
 @login_required

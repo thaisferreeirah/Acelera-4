@@ -106,13 +106,6 @@
             /* se quiser separar os botões também */
         }
 
-        .table-container {
-            width: 100%;
-            max-height: 60vh;
-            overflow-x: auto;
-            overflow-y: auto;
-        }
-
         .btn-toggle {
             display: inline-flex;
             align-items: center;
@@ -195,6 +188,14 @@
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-history"></i> Histórico de Acessos</h2>
+                <div>
+                    <input type="text" id="filterName" placeholder="Buscar por nome"
+                        style="display: inline-block; width: auto;">
+                    <input type="date" id="filterDate" class="form-control" style="display: inline-block; width: auto;">
+                    <button class="btn btn-primary" onclick="resetFilter()">
+                        <i class="fas fa-sync-alt"></i> Limpar
+                    </button>
+                </div>
             </div>
 
             <div class="table-container">
@@ -341,6 +342,48 @@
             document.getElementById("descricao").value = "";
             document.getElementById("fotoPessoa").src = "static/images/default.jpg";
         }
+
+        function aplicarFiltro() {
+            const nomeFiltro = document.getElementById("filterName").value.toLowerCase();
+            const dataFiltro = document.getElementById("filterDate").value;
+
+            const formattedDataFiltro = dataFiltro
+                ? dataFiltro.split("-").reverse().join("/")
+                : "";
+
+            const linhas = document
+                .getElementById("tabela-registros")
+                .getElementsByTagName("tr");
+
+            for (let i = 0; i < linhas.length; i++) {
+                const colunas = linhas[i].getElementsByTagName("td");
+
+                const dataLinha = colunas[0].textContent.trim();
+                const nomeLinha = colunas[2].textContent.trim().toLowerCase();
+
+                const correspondeNome = nomeLinha.includes(nomeFiltro);
+                const correspondeData =
+                    !formattedDataFiltro || dataLinha === formattedDataFiltro;
+
+                linhas[i].style.display =
+                    correspondeNome && correspondeData ? "" : "none";
+            }
+        }
+
+        function resetFilter() {
+            const tabela = document.getElementById("tabela-registros");
+            const linhas = tabela.getElementsByTagName("tr");
+
+            for (let i = 0; i < linhas.length; i++) {
+                linhas[i].style.display = "";
+            }
+
+            document.getElementById("filterDate").value = "";
+            document.getElementById("filterName").value = "";
+        }
+
+        document.getElementById("filterName").addEventListener("input", aplicarFiltro);
+        document.getElementById("filterDate").addEventListener("change", aplicarFiltro);
 
         // Atualizar a tabela quando a página carrega
         document.addEventListener('DOMContentLoaded', carregarHistorico);

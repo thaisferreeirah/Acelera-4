@@ -17,10 +17,6 @@ ESP32_WROOM_URL = "http://esp32wroom.local/activate"
 ESP32_CAM_URL = "http://esp32cam.local:81/stream"
 FLASK_SERVER_URL = config.FLASK_URL
 
-@esp.route('/takephoto')
-def takephoto():
-    return render_template('takephoto.html')
-
 @esp.route('/reconhecimentoDisplay')
 def reconhecimentoDisplay():
     return render_template('reconhecimentoDisplay.html')  # Novo nome do HTML
@@ -85,7 +81,7 @@ def generate_frames():
                             dataLog = {"id": id}
                             responseLog = requests.post(f"{FLASK_SERVER_URL}/reclogtest", data=dataLog)
                             print(responseLog)
-                            #requests.get(ESP32_WROOM_URL)  # Ativar o motor
+                            requests.get(ESP32_WROOM_URL)  # Ativar o motor
                         except requests.exceptions.JSONDecodeError:
                             print("Erro ao decodificar JSON. Resposta recebida:")
                             print(response.text)
