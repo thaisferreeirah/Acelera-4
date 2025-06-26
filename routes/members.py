@@ -7,6 +7,8 @@ from base64 import b64decode
 from werkzeug.utils import secure_filename
 import os
 
+from routes.esp import adicionar_nova_face, atualizar_face
+
 members = Blueprint("members", __name__)
 
 @members.route("/autorizado")
@@ -72,6 +74,8 @@ def auth_member_signup():
         filename = secure_filename(f"{member.authorized_id}.png")
         photo_file.save(os.path.join("static/images", filename))
 
+    adicionar_nova_face(f"{member.authorized_id}.png")
+
     return jsonify({"message": "Autorizado cadastrado com sucesso!"}), 200
 
 @members.route("/membros/<int:id>", methods=["GET"])
@@ -130,6 +134,8 @@ def update_member(id):
         photo_file.save(os.path.join("static/images", filename))
 
     db.session.commit()
+
+    atualizar_face(f"{member.authorized_id}.png")
 
     return jsonify({"message": "Alterações salvas com sucesso!"}), 200
 

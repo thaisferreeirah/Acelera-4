@@ -22,7 +22,7 @@ def reconhecimentoDisplay():
     return render_template('reconhecimentoDisplay.html')  # Novo nome do HTML
 
 ultimo_reconhecimento = 0  # Tempo da última ativação
-COOLDOWN_TIME = 3  # Tempo mínimo entre ativações (segundos)
+COOLDOWN_TIME = 5  # Tempo mínimo entre ativações (segundos)
 
 # Função para permitir exibir a captura do ESP32Cam em mais de uma página e para fazer o reconhecimento facial
 def generate_frames():
@@ -81,7 +81,7 @@ def generate_frames():
                             dataLog = {"id": id}
                             responseLog = requests.post(f"{FLASK_SERVER_URL}/reclogtest", data=dataLog)
                             print(responseLog)
-                            requests.get(ESP32_WROOM_URL)  # Ativar o motor
+                            threading.Thread(target=ativar_motor).start()
                         except requests.exceptions.JSONDecodeError:
                             print("Erro ao decodificar JSON. Resposta recebida:")
                             print(response.text)
@@ -150,8 +150,49 @@ for filename in os.listdir(STATIC_FOLDER):
         except Exception as e:
             print(f"Erro ao processar {filename}: {e}")
 
+def adicionar_nova_face(nome_arquivo):
+    person_name = os.path.splitext(nome_arquivo)[0]
+    image_path = os.path.join(STATIC_FOLDER, nome_arquivo)
+
+    try:
+        image = face_recognition.load_image_file(image_path)
+        encoding = face_recognition.face_encodings(image)
+        if encoding:
+            known_faces[person_name] = encoding[0]
+            print(f"Novo rosto adicionado: {person_name}")
+        else:
+            print(f"Não foi possível detectar rosto em {nome_arquivo}")
+    except Exception as e:
+        print(f"Erro ao processar nova imagem: {e}")
+
+def atualizar_face(nome_arquivo):
+    person_name = os.path.splitext(nome_arquivo)[0]
+    image_path = os.path.join(STATIC_FOLDER, nome_arquivo)
+
+    try:
+        image = face_recognition.load_image_file(image_path)
+        encoding = face_recognition.face_encodings(image)
+        if encoding:
+            known_faces[person_name] = encoding[0]
+            print(f"Rosto de {person_name} atualizado com sucesso.")
+        else:
+            # Se não tem rosto e já existe na lista, remover
+            if person_name in known_faces:
+                del known_faces[person_name]
+                print(f"Imagem sem rosto. Rosto antigo de {person_name} foi removido.")
+            else:
+                print(f"Imagem sem rosto e sem entrada anterior para {person_name}. Nenhuma ação tomada.")
+    except Exception as e:
+        print(f"Erro ao atualizar/remover {person_name}: {e}")
+
 
 # Abrir portão manualmente
 @esp.route('/open_gate')
 def open_gate():
     requests.get(ESP32_WROOM_URL)
+
+def ativar_motor():
+    try:
+        requests.get(ESP32_WROOM_URL)
+    except Exception as e:
+        print(f"Erro ao ativar motor: {e}")
