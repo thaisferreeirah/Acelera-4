@@ -9,6 +9,7 @@ import requests
 
 import config
 from flask import Blueprint, request, render_template
+from helpers import announce_authorized
 from routes.websocket import websocketio
 
 esp = Blueprint("esp", __name__)
@@ -82,6 +83,10 @@ def generate_frames():
                             responseLog = requests.post(f"{FLASK_SERVER_URL}/reclogtest", data=dataLog)
                             print(responseLog)
                             threading.Thread(target=ativar_motor).start()
+                            
+                            # Fala o nome do autorizado
+                            announce_authorized(name)
+
                         except requests.exceptions.JSONDecodeError:
                             print("Erro ao decodificar JSON. Resposta recebida:")
                             print(response.text)
