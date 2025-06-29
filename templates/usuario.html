@@ -208,20 +208,20 @@
     <div id="menu-container"></div>
 
     <main class="main-content layout-flex">
-        <div class="card">
+        <div class="card" style="flex: 1;">
             <div class="card-header">
                 <h2><i class="fas fa-user-plus"></i> Cadastrar Usuário</h2>
             </div>
-            <form id="authorizedForm" action="/membros" method="POST" enctype="multipart/form-data"
+            <form id="authorizedForm" action="/cadastro" method="POST" enctype="multipart/form-data"
                 style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 250px;">
+                <div style="flex: 1; width: 250px;">
                     <div class="input-group">
                         <i class="fas fa-user"></i>
-                        <input type="text" id="regName" placeholder="Nome de Usuário" name="username" required>
+                        <input type="text" id="name" placeholder="Nome" name="name" required>
                     </div>
                     <div class="input-group">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="regEmail" placeholder="E-mail" name="email" required>
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" id="username" placeholder="Usuário" name="username" required>
                     </div>
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
@@ -241,15 +241,18 @@
                             <option value="Porteiro">Porteiro</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-secondary">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fas fa-user-check"></i> Cadastrar
+                    </button>
+                    <button type="button" id="limparBtn" class="btn btn-secondary">
+                        <i class="fas fa-eraser"></i> Limpar
                     </button>
                     <div id="formMessage" class="mensagem" style="display: none;"></div>
                 </div>
             </form>
         </div>
 
-        <div class="card">
+        <div class="card" style="flex: 2;">
             <div class="card-header">
                 <h2><i class="fas fa-users"></i> Usuários Cadastrados</h2>
                 <div class="card-filter">
@@ -262,12 +265,12 @@
             </div>
 
             <div class="table-container">
-                <table class="table" id="authorizedTable">
+                <table class="table" id="userTable">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nome</th>
-                            <th>E-mail</th>
+                            <th>Cargo</th>
                             <th class="col-acoes"></th>
                             <th class="col-acoes"></th>
                         </tr>
@@ -278,8 +281,361 @@
         </div>
     </main>
 
-    <script>
+    <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content card">
+                <div class="modal-header card-header">
+                    <h2 class="modal-title" id="editarModalLabel">
+                        <i class="fas fa-user-edit"></i> Editar Autorizado
+                    </h2>
+                </div>
 
+                <div class="modal-body">
+                    <form id="editForm" method="POST" enctype="multipart/form-data"
+                        style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
+                        <input type="hidden" id="edit-id" name="id">
+
+                        <!-- Dados de edição -->
+                        <div style="flex: 1; min-width: 250px;">
+                            <div class="input-group mb-3">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="edit-name" name="name" class="form-control" placeholder="Nome"
+                                    required>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <i class="fas fa-id-card"></i>
+                                <input type="text" id="edit-user" name="username" class="form-control"
+                                    placeholder="Usuário" required>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="edit-password" name="password" class="form-control"
+                                    placeholder="Senha nova" minlength="6" required>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="edit-confirmPassword" class="form-control"
+                                    name="confirmPassword" placeholder="Confirmar Senha" required
+                                    oninput="editCheckPasswordMatch()">
+                                <small id="edit-passwordError" style="color: red; display: none;">As senhas não
+                                    coincidem!</small>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <select id="edit-position" name="access" required>
+                                    <option value="" disabled selected>Selecione seu cargo/função</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Porteiro">Porteiro</option>
+                                </select>
+                            </div>
+
+                            <div class="modal-footer px-0">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Salvar
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    onclick="fecharEdicaoModal()">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                                <div id="editFormMessage" class="mensagem" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="confirmarExclusaoModal" style="display: none;">
+        <div class="modal-content card" style="text-align: center;">
+            <h3 id="textoConfirmacao">Tem certeza que deseja excluir?</h3>
+            <div class="botoes-modal" style="text-align: center; margin-top: 20px;">
+                <button id="btnConfirmar" class="btn-confirmar btn btn-primary">
+                    <i class="fas fa-check"></i> Sim
+                </button>
+                <button id="btnCancelar" class="btn-cancelar btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mensagemAcaoModal" class="modal" style="display: none;">
+        <div class="modal-content card" style="text-align: center;">
+            <h3 id="mensagemTextoModal">Mensagem aqui</h3>
+            <div class="botoes-modal" style="text-align: center; margin-top: 20px;">
+                <button id="fecharMensagemBtn" class="btn-fechar btn btn-secondary">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkPasswordMatch() {
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const errorMessage = document.getElementById("passwordError");
+
+            if (confirmPassword && password !== confirmPassword) {
+                errorMessage.style.display = "block";
+            } else {
+                errorMessage.style.display = "none";
+            }
+        }
+
+        function editCheckPasswordMatch() {
+            const password = document.getElementById("edit-password").value;
+            const confirmPassword = document.getElementById("edit-confirmPassword").value;
+            const errorMessage = document.getElementById("edit-passwordError");
+
+            if (confirmPassword && password !== confirmPassword) {
+                errorMessage.style.display = "block";
+            } else {
+                errorMessage.style.display = "none";
+            }
+        }
+
+        document.getElementById("limparBtn").addEventListener("click", function () {
+            // Limpa o formulário
+            document.getElementById("authorizedForm").reset();
+
+            // Limpa a mensagem, se houver
+            const box = document.getElementById("formMessage");
+            box.textContent = "";
+            box.style.display = "none";
+
+            const errorMessage = document.getElementById("passwordError");
+            errorMessage.style.display = "none";
+        });
+
+        document.getElementById("authorizedForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // Impede recarregamento da página
+
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const errorMessage = document.getElementById("passwordError");
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = "block";
+                e.preventDefault(); // Impede o envio do formulário
+            } else {
+
+                const form = e.target;
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.message);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        mostrarMensagemNoForm(data.message, "success");
+                        form.reset();
+                        carregarUsuarios();
+                    })
+                    .catch(error => {
+                        mostrarMensagemNoForm(error.message, "error");
+                    });
+            }
+        });
+
+        function mostrarMensagemNoForm(texto, tipo = "success") {
+            const box = document.getElementById("formMessage");
+
+            // Limpa classes anteriores
+            box.classList.remove("success", "error");
+
+            // Aplica nova classe
+            box.classList.add("mensagem", tipo);
+            box.textContent = texto;
+            box.style.display = "block";
+        }
+
+        function carregarUsuarios() {
+            fetch("/usuarios")
+                .then(response => response.json())
+                .then(data => {
+                    const tabela = document.getElementById("userTable").querySelector("tbody");
+                    tabela.innerHTML = ""; // limpa o conteúdo da tabela
+
+                    data.forEach(user => {
+                        const accessLabel = user.access_level === "a" ? "Administrador" :
+                            user.access_level === "p" ? "Porteiro" : "";
+
+                        const linha = `
+                            <tr>
+                                <td>${user.id ?? ""}</td>
+                                <td>${user.name ?? ""}</td>
+                                <td>${accessLabel}</td>
+                                <td class="col-acoes">
+                                    <button class="btn btn-sm btn-secondary btn-table" onclick="abrirEdicaoModal(${user.id}, '${user.name}', '${user.username}', '${accessLabel}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                                <td class="col-acoes">
+                                    <button class="btn btn-sm btn-tertiary btn-table" onclick="excluirUsuario(${user.id})">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        tabela.innerHTML += linha;
+                    });
+                })
+                .catch(error => console.error("Erro ao buscar usuários:", error));
+        }
+
+        function aplicarFiltro() {
+            const nomeFiltro = document.getElementById("filterName").value.toLowerCase();
+            const linhas = document.querySelector("#userTable tbody").getElementsByTagName("tr");
+
+            for (let i = 0; i < linhas.length; i++) {
+                const colunas = linhas[i].getElementsByTagName("td");
+                const nomeLinha = colunas[1]?.textContent.trim().toLowerCase();
+
+                const correspondeNome = nomeLinha.includes(nomeFiltro);
+                linhas[i].style.display = correspondeNome ? "" : "none";
+            }
+        }
+
+        function resetFilter() {
+            const linhas = document.querySelector("#userTable tbody").getElementsByTagName("tr");
+
+            for (let i = 0; i < linhas.length; i++) {
+                linhas[i].style.display = "";
+            }
+
+            document.getElementById("filterName").value = "";
+        }
+
+        document.getElementById("filterName").addEventListener("input", aplicarFiltro);
+
+        document.addEventListener("DOMContentLoaded", function () {
+            carregarUsuarios();
+        });
+    </script>
+
+    <script>
+        function abrirEdicaoModal(id, nome, username, access_level) {
+            const box = document.getElementById("editFormMessage");
+            box.textContent = "";
+            box.style.display = "none";
+            box.classList.remove("sucesso", "erro");
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-name").value = nome;
+            document.getElementById("edit-user").value = username;
+            document.getElementById("edit-position").value = access_level;
+            document.getElementById("edit-password").value = "";
+            document.getElementById("edit-confirmPassword").value = "";
+            const errorMessage = document.getElementById("edit-passwordError");
+            errorMessage.style.display = "none";
+
+            const form = document.getElementById("editForm");
+            form.action = "/usuarios/update/" + encodeURIComponent(id);
+
+            document.getElementById("editarModal").style.display = "block";
+        }
+
+        function mostrarMensagemNoModalEdicao(texto, tipo = "success") {
+            const box = document.getElementById("editFormMessage");
+            box.classList.remove("sucesso", "error");
+            box.classList.add("mensagem", tipo);
+            box.textContent = texto;
+            box.style.display = "block";
+        }
+
+        document.getElementById("editForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // impede envio tradicional
+
+            const password = document.getElementById("edit-password").value;
+            const confirmPassword = document.getElementById("edit-confirmPassword").value;
+            const errorMessage = document.getElementById("edit-passwordError");
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = "block";
+                e.preventDefault(); // Impede o envio do formulário
+            } else {
+                const form = e.target;
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => { throw new Error(data.message); });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        mostrarMensagemNoModalEdicao(data.message, "success");
+                        carregarUsuarios();
+                    })
+                    .catch(error => {
+                        mostrarMensagemNoModalEdicao(error.message, "error");
+                    });
+            }
+        });
+
+        function fecharEdicaoModal() {
+            document.getElementById("editarModal").style.display = "none";
+        }
+
+        function excluirUsuario(id) {
+            idParaExcluir = id;
+            document.getElementById("confirmarExclusaoModal").style.display = "block";
+        }
+
+        document.getElementById("btnCancelar").addEventListener("click", function () {
+            idParaExcluir = null;
+            document.getElementById("confirmarExclusaoModal").style.display = "none";
+        });
+
+        document.getElementById("btnConfirmar").addEventListener("click", function () {
+            if (!idParaExcluir) return;
+
+            fetch(`/usuarios/delete/${idParaExcluir}`, {
+                method: "POST"
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(msg => { throw new Error(msg); });
+                    }
+                    exibirMensagemEmModal("Usuário excluído com sucesso!");
+                    carregarUsuarios();
+                })
+                .catch(error => {
+                    exibirMensagemEmModal(error.message || "Erro ao excluir usuário.");
+                })
+                .finally(() => {
+                    idParaExcluir = null;
+                    document.getElementById("confirmarExclusaoModal").style.display = "none";
+                });
+        });
+
+        function exibirMensagemEmModal(texto) {
+            const textoMsg = document.getElementById("mensagemTextoModal");
+            const modal = document.getElementById("mensagemAcaoModal");
+
+            textoMsg.textContent = texto;
+            modal.style.display = "block";
+        }
+
+        document.getElementById("fecharMensagemBtn").addEventListener("click", function () {
+            document.getElementById("mensagemAcaoModal").style.display = "none";
+        });
     </script>
     <script src="../static/js/script.js"></script>
 </body>

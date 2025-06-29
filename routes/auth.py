@@ -1,10 +1,10 @@
-from flask import Blueprint, request, session, render_template, redirect, url_for
+from flask import Blueprint, request, session, render_template, redirect, url_for, jsonify
 from models.user import db, User
 from helpers import login_required
 
 auth = Blueprint("auth", __name__)
 
- #Rotas para autenticação
+# Rotas para autenticação
 @auth.route("/login")
 def loging():
     return render_template("login.html")
@@ -32,22 +32,22 @@ def signupg():
 @auth.route("/cadastro", methods=["POST"])
 @login_required
 def signup():
+    name = request.form.get("name")
     username = request.form.get("username")
-    email = request.form.get("email")
     password = request.form.get("password")
     access_level = request.form.get("access")
 
     if not username or not password:
-        return "Nome de usuário e senha são obrigatórios!", 400
+        return jsonify({"message": "Nome de usuário e senha são obrigatórios!"}), 400
     
-    if not email:
-        return "Email é obrigatório!", 400
+    if not name:
+        return jsonify({"message": "Nome é obrigatório!"}), 400
     
     if not access_level:
-        return "Selecione um nível de acesso!", 400
+        return jsonify({"message": "Selecione um nível de acesso!"}), 400
     
     if User.query.filter_by(username=username).first():
-        return "Nome de usuário já existe!", 409
+        return jsonify({"message": "Nome de usuário já existe!"}), 409
     
     match access_level:
         case 'Administrador':
@@ -55,14 +55,70 @@ def signup():
         case 'Porteiro':
             access_level='p'
         case _:
-            return "Inválido!", 400
+            return jsonify({"message": "Inválido!"}), 400
     
-    user = User(username=username, email=email, access_level=access_level)
+    user = User(name=name, username=username, access_level=access_level)
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()
 
-    return redirect(url_for("auth.signupg"))
+    return jsonify({"message": "Usuário cadastrado com sucesso!"}), 200
+
+@auth.route("/usuarios", methods=["GET"])
+#@login_required
+def get_users():
+    users = User.query.all()
+
+    if not users:
+        return "Nenhum membro autorizado encontrado!", 404
+
+    users_list = []
+    for user in users:
+        users_list.append({
+            "id": user.id,
+            "name": user.name,
+            "username": user.username,
+            "access_level": user.access_level
+        })            
+    
+    return users_list
+
+@auth.route("/usuarios/update/<int:id>", methods=["POST"])
+#@login_required
+def usermember(id):
+    user = User.query.get(id)
+
+    if not user:
+        return jsonify({"message": "Não encontrado!"}), 404
+
+    new_name = request.form.get("name")
+    new_username = request.form.get("username")
+    new_password = request.form.get("password")
+
+    # Verifica se o novo username já pertence a outro usuário
+    if User.query.filter(User.username == new_username, User.id != id).first():
+        return jsonify({"message": "Usuário já existe!"}), 409
+
+    # Atualiza os dados
+    user.name = new_name
+    user.username = new_username
+    user.hash_password(new_password)
+
+    db.session.commit()
+
+    return jsonify({"message": "Alterações salvas com sucesso!"}), 200
+
+@auth.route("/usuarios/delete/<int:id>", methods=["POST"])
+def delete_user(id):
+    user = User.query.get(id)
+
+    if not user:
+        return "Usuário não encontrado", 404
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return "Apagado com sucesso!", 204
 
 @auth.route("/logout")
 @login_required

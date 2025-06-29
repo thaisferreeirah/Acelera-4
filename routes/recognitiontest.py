@@ -10,10 +10,6 @@ from models.user import db
 
 rectest = Blueprint("recognitiontest", __name__)
 
-@rectest.route('/lista-cadastros')
-def acesso():
-    return render_template('lista_cadastros.html')
-
 # Verifica se o reconhecimento facial consegue buscar as informações do autorizado
 @rectest.route("/membrosrectest/<int:id>", methods=["GET"])
 def get_memberrectest(id):
@@ -100,9 +96,9 @@ def get_photo(id):
 from models.user import db, User
 
 def cadastrarsemlogin():
-    username = "ad"
-    email = "ad@email.com"
-    password = "123"
+    name = "Johnny Bravo"
+    username = "jojo"
+    password = "123123"
     access_level = "Administrador"
     
     match access_level:
@@ -113,7 +109,7 @@ def cadastrarsemlogin():
         case _:
             return "Inválido!", 400
     
-    user = User(username=username, email=email, access_level=access_level)
+    user = User(name=name, username=username, access_level=access_level)
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()

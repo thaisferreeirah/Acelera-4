@@ -6,6 +6,7 @@ from base64 import b64decode
 
 from werkzeug.utils import secure_filename
 import os
+import glob
 
 from routes.esp import adicionar_nova_face, atualizar_face
 
@@ -141,9 +142,6 @@ def update_member(id):
 
 @members.route("/membros/delete/<int:id>", methods=["POST"])
 def delete_member(id):
-    import os
-    import glob
-
     member = Authorized.query.get(id)
 
     if not member:
