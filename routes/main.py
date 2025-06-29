@@ -45,13 +45,5 @@ def get_users():
             "email": user.email,
             "access_level": user.access_level,
         })            
-    
     return user_list
-
-
-
-
-
-
-
 
