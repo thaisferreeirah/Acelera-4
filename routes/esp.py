@@ -85,7 +85,7 @@ def generate_frames():
                             threading.Thread(target=ativar_motor).start()
                             
                             # Fala o nome do autorizado
-                            announce_authorized(name)
+                            threading.Thread(target=announce_authorized, args=(name,)).start()
 
                         except requests.exceptions.JSONDecodeError:
                             print("Erro ao decodificar JSON. Resposta recebida:")
