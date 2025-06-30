@@ -221,7 +221,7 @@
                     </div>
                     <div class="input-group">
                         <i class="fas fa-id-card"></i>
-                        <input type="text" id="username" placeholder="Usuário" name="username" required>
+                        <input type="text" id="email" placeholder="E-mail" name="email" required>
                     </div>
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
@@ -305,8 +305,8 @@
 
                             <div class="input-group mb-3">
                                 <i class="fas fa-id-card"></i>
-                                <input type="text" id="edit-user" name="username" class="form-control"
-                                    placeholder="Usuário" required>
+                                <input type="text" id="edit-user" name="email" class="form-control"
+                                    placeholder="E-mail" required>
                             </div>
 
                             <div class="input-group mb-3">
@@ -479,7 +479,7 @@
                                 <td>${user.name ?? ""}</td>
                                 <td>${accessLabel}</td>
                                 <td class="col-acoes">
-                                    <button class="btn btn-sm btn-secondary btn-table" onclick="abrirEdicaoModal(${user.id}, '${user.name}', '${user.username}', '${accessLabel}')">
+                                    <button class="btn btn-sm btn-secondary btn-table" onclick="abrirEdicaoModal(${user.id}, '${user.name}', '${user.email}', '${accessLabel}')">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                 </td>
@@ -527,14 +527,14 @@
     </script>
 
     <script>
-        function abrirEdicaoModal(id, nome, username, access_level) {
+        function abrirEdicaoModal(id, nome, email, access_level) {
             const box = document.getElementById("editFormMessage");
             box.textContent = "";
             box.style.display = "none";
             box.classList.remove("sucesso", "erro");
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-name").value = nome;
-            document.getElementById("edit-user").value = username;
+            document.getElementById("edit-user").value = email;
             document.getElementById("edit-position").value = access_level;
             document.getElementById("edit-password").value = "";
             document.getElementById("edit-confirmPassword").value = "";

@@ -27,7 +27,7 @@ def acesso():
 #
 #    filters = []
 #    if name_filter:
-#        filters.append(User.username.ilike(f"%{name_filter}%"))
+#        filters.append(User.email.ilike(f"%{name_filter}%"))
 #    if access_level_filter:
 #        filters.append(User.access_level.ilike(f"%{access_level_filter}%"))
 #
@@ -41,7 +41,7 @@ def acesso():
 #    for user in users:
 #        user_list.append({
 #            "id": user.id,
-#            "username": user.username,
+#            "email": user.email,
 #            "email": user.email,
 #            "access_level": user.access_level,
 #        })            

@@ -97,7 +97,7 @@ from models.user import db, User
 
 def cadastrarsemlogin():
     name = "Johnny Bravo"
-    username = "jojo"
+    email = "jojo@email.com"
     password = "123123"
     access_level = "Administrador"
     
@@ -109,7 +109,7 @@ def cadastrarsemlogin():
         case _:
             return "Inválido!", 400
     
-    user = User(name=name, username=username, access_level=access_level)
+    user = User(name=name, email=email, access_level=access_level)
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()

@@ -11,13 +11,13 @@ def loging():
 
 @auth.route("/login", methods=["POST"])
 def login():
-    username = request.form.get("username")
+    email = request.form.get("email")
     password = request.form.get("password")
 
-    if not username or not password:
+    if not email or not password:
         return "Nome de usuário e senha são obrigatórios!", 400
     
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(email=email).first()
     if user and user.check_password(password):
         session["user_id"] = user.id
         return redirect(url_for("main.index"))
@@ -33,11 +33,11 @@ def signupg():
 @login_required
 def signup():
     name = request.form.get("name")
-    username = request.form.get("username")
+    email = request.form.get("email")
     password = request.form.get("password")
     access_level = request.form.get("access")
 
-    if not username or not password:
+    if not email or not password:
         return jsonify({"message": "Nome de usuário e senha são obrigatórios!"}), 400
     
     if not name:
@@ -46,7 +46,7 @@ def signup():
     if not access_level:
         return jsonify({"message": "Selecione um nível de acesso!"}), 400
     
-    if User.query.filter_by(username=username).first():
+    if User.query.filter_by(email=email).first():
         return jsonify({"message": "Nome de usuário já existe!"}), 409
     
     match access_level:
@@ -57,7 +57,7 @@ def signup():
         case _:
             return jsonify({"message": "Inválido!"}), 400
     
-    user = User(name=name, username=username, access_level=access_level)
+    user = User(name=name, email=email, access_level=access_level)
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()
@@ -77,7 +77,7 @@ def get_users():
         users_list.append({
             "id": user.id,
             "name": user.name,
-            "username": user.username,
+            "email": user.email,
             "access_level": user.access_level
         })            
     
@@ -92,16 +92,16 @@ def usermember(id):
         return jsonify({"message": "Não encontrado!"}), 404
 
     new_name = request.form.get("name")
-    new_username = request.form.get("username")
+    new_email = request.form.get("email")
     new_password = request.form.get("password")
 
-    # Verifica se o novo username já pertence a outro usuário
-    if User.query.filter(User.username == new_username, User.id != id).first():
+    # Verifica se o novo email já pertence a outro usuário
+    if User.query.filter(User.email == new_email, User.id != id).first():
         return jsonify({"message": "Usuário já existe!"}), 409
 
     # Atualiza os dados
     user.name = new_name
-    user.username = new_username
+    user.email = new_email
     user.hash_password(new_password)
 
     db.session.commit()
