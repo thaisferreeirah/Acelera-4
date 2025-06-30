@@ -453,8 +453,15 @@ body {
     transition: all 0.2s;
 }
 
+.logo-menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    /* Espaço entre a logo e o texto */
+}
+
 .logo-menu i {
-    font-size: 1.8rem;
+    font-size: 1.2rem;
     color: var(--verde-limao);
 }
 
@@ -500,17 +507,29 @@ body {
         position: fixed;
         top: 0;
         left: -100%;
-        height: 100vh;
+        height: 100%;
         width: 220px;
         background-color: var(--verde-escuro);
         flex-direction: column;
         overflow-y: auto;
         transition: left 0.3s ease;
         box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+        justify-content: flex-start;
     }
 
     .menu-superior.active {
         left: 0;
+    }
+
+    .logo-menu {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    #status-reconhecimento {
+        padding-bottom: 10px;
     }
 
     .itens-menu {
