@@ -21,7 +21,8 @@ def members_page():
 @members.route("/membros", methods=["GET"])
 #@login_required
 def get_members():
-    authorized_members = Authorized.query.all()
+    # Ordena os resultados pelo ID em ordem decrescente (do último para o primeiro)
+    authorized_members = Authorized.query.order_by(Authorized.authorized_id.desc()).all()
 
     if not authorized_members:
         return "Nenhum membro autorizado encontrado!", 404
@@ -33,8 +34,8 @@ def get_members():
             "name": member.authorized_name,
             "cpf": member.cpf,
             "position": member.position
-        })            
-    
+        })
+
     return members_list
 
 @members.route("/membros", methods=["POST"])
