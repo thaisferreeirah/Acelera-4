@@ -45,6 +45,13 @@ function toggleMenu() {
     menu.classList.toggle('active');
 }
 
+socket.on('reconhecimento_status', (statusAtivo) => {
+    reconhecimentoAtivo = statusAtivo;
+    localStorage.setItem("reconhecimentoAtivo", JSON.stringify(reconhecimentoAtivo));
+    atualizarBotao(); // Atualiza o botão
+    atualizarStatusMenu(); // Atualiza o status no menu
+});
+
 document.addEventListener("DOMContentLoaded", () => {
-    atualizarBotao();
+    socket.emit('get_recognition_status'); // Pede ao backend
 });

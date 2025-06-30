@@ -24,12 +24,12 @@ def reconhecimentoDisplay():
 
 ultimo_reconhecimento = 0  # Tempo da última ativação
 COOLDOWN_TIME = 5  # Tempo mínimo entre ativações (segundos)
+reconhecimento_ativo = False
 
 # Função para permitir exibir a captura do ESP32Cam em mais de uma página e para fazer o reconhecimento facial
 def generate_frames():
     cap = cv2.VideoCapture(ESP32_CAM_URL)
     global reconhecimento_ativo, ultimo_reconhecimento
-    reconhecimento_ativo = False
 
     frame_count = 0
     while cap.isOpened():
@@ -112,6 +112,11 @@ def disable_recognition():
     print("Reconhecimento desativado")
     global reconhecimento_ativo
     reconhecimento_ativo = False
+
+@websocketio.on('get_recognition_status')
+def handle_get_recognition_status():
+    global reconhecimento_ativo
+    websocketio.emit('reconhecimento_status', reconhecimento_ativo)
 
 # Conecta
 @websocketio.on('connect')
