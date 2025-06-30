@@ -494,7 +494,7 @@ body {
     opacity: 0.5;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 830px) {
     .main-content {
         padding: 1rem;
     }

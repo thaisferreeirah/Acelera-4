@@ -124,4 +124,4 @@ def delete_user(id):
 @login_required
 def logout():
     session.clear()
-    return "Sessão Limpa.", 204
+    return redirect(url_for('auth.login'))
