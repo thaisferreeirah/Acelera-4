@@ -1,7 +1,6 @@
 from datetime import datetime
 import os
 
-import psycopg2
 from flask import Blueprint, jsonify, request, url_for, render_template
 
 from models.authorized_member import Authorized
@@ -38,19 +37,27 @@ def reclogtest():
 
 # Busca o histórico de reconhecimento facial no banco de dados
 def get_data_histrectest():
-    conn = psycopg2.connect(database="meubanco", user="postgres", password="123", host="localhost", port="5432")
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT a.authorized_name, r.date, r.time, r.method, r.description
-        FROM recognition r
-        LEFT JOIN authorized a ON a.authorized_id = r.authorized_id
-        ORDER BY r.recognition_id DESC""")
-    
-    rows = cur.fetchall()
-    conn.close()
+    recognitions = db.session.query(
+            Authorized.authorized_name,
+            Recognition.date,
+            Recognition.time,
+            Recognition.method,
+            Recognition.description
+        ).outerjoin(Authorized, Recognition.authorized_id == Authorized.authorized_id)\
+        .order_by(Recognition.recognition_id.desc())\
+        .all() 
 
-    # Converte 'time' para string formatada
-    return [{"authorized_name": row[0], "date": row[1].strftime("%d/%m/%Y"), "time": row[2].strftime("%H:%M:%S"), "method": row[3], "description": row[4]} for row in rows]
+    recognition_history = []
+    for recognition in recognitions:
+        recognition_history.append({
+            "authorized_name": recognition.authorized_name,
+            "date": recognition.date.strftime("%d/%m/%Y"), 
+            "time": recognition.time.strftime("%H:%M:%S"), 
+            "method": recognition.method,
+            "description": recognition.description
+        })
+        
+    return recognition_history
 
 @rectest.route('/histrectest')
 def histrectest():
