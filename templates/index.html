@@ -7,91 +7,130 @@
     <title>Dashboard - Controle de Acesso Escolar</title>
     <link rel="stylesheet" href="../static/fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="../static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        
+        function renderRecognitionChart() {
+            fetch('/histrectest') 
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Dados brutos do histórico recebidos:", data); 
+
+                    const dailyCounts = {};
+                    data.forEach(item => {
+                        const date = item.date; 
+                        dailyCounts[date] = (dailyCounts[date] || 0) + 1;
+                    });
+
+                    const sortedDates = Object.keys(dailyCounts).sort((a, b) => {
+                        const [dA, mA, yA] = a.split('/');
+                        const [dB, mB, yB] = b.split('/');
+                        const dateA = new Date(`${yA}-${mA}-${dA}`);
+                        const dateB = new Date(`${yB}-${mB}-${dB}`);
+                        return dateA - dateB;
+                    });
+
+                    const labels = sortedDates;
+                    const counts = sortedDates.map(date => dailyCounts[date]);
+
+                    const ctx = document.getElementById('recognitionChart').getContext('2d');
+
+                    new Chart(ctx, {
+                        type: 'bar', 
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Reconhecimentos Diários',
+                                data: counts,
+                                backgroundColor: 'rgba(75, 192, 192, 0.6)', 
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Quantidade'
+                                    },
+                                    ticks: {
+                                        stepSize: 1, 
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Data'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Reconhecimentos por Dia'
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar dados do gráfico:', error);
+                });
+        }
+
+        // Simula a tabela sendo preenchida
+        document.addEventListener('DOMContentLoaded', function () {
+            const recentAccessData = [
+                { date: "10/05/2023 08:15", name: "João Silva", id: "2023001", type: "Entrada", method: "Facial" },
+                { date: "10/05/2023 08:20", name: "Maria Oliveira", id: "2023002", type: "Entrada", method: "Facial" },
+                { date: "10/05/2023 09:05", name: "Carlos Souza", id: "2023003", type: "Entrada", method: "Cartão" },
+                { date: "10/05/2023 10:30", name: "Ana Costa", id: "2023004", type: "Saída", method: "Facial" },
+                { date: "10/05/2023 11:45", name: "Pedro Santos", id: "2023005", type: "Entrada", method: "Facial" }
+            ];
+
+            const tableBody = document.getElementById('recentAccessTable');
+
+            recentAccessData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td>${item.date}</td>
+            <td>${item.name}</td>
+            <td>${item.id}</td>
+            <td><span class="access-type ${item.type.toLowerCase()}">${item.type}</span></td>
+            <td>${item.method}</td>
+          `;
+                tableBody.appendChild(row);
+            });
+
+            setTimeout(() => {
+                document.querySelectorAll('.access-type').forEach(el => {
+                    if (el.textContent === 'Entrada') {
+                        el.classList.add('entrada');
+                    } else {
+                        el.classList.add('saida');
+                    }
+                });
+            }, 600); 
+
+            renderRecognitionChart(); 
+        });
+
+    </script>
 </head>
-<script>
-
-    // Simula a tabela sendo preenchida
-    document.addEventListener('DOMContentLoaded', function () {
-        const recentAccessData = [
-            { date: "10/05/2023 08:15", name: "João Silva", id: "2023001", type: "Entrada", method: "Facial" },
-            { date: "10/05/2023 08:20", name: "Maria Oliveira", id: "2023002", type: "Entrada", method: "Facial" },
-            { date: "10/05/2023 09:05", name: "Carlos Souza", id: "2023003", type: "Entrada", method: "Cartão" },
-            { date: "10/05/2023 10:30", name: "Ana Costa", id: "2023004", type: "Saída", method: "Facial" },
-            { date: "10/05/2023 11:45", name: "Pedro Santos", id: "2023005", type: "Entrada", method: "Facial" }
-        ];
-
-        const tableBody = document.getElementById('recentAccessTable');
-
-        recentAccessData.forEach((item, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-        <td>${item.date}</td>
-        <td>${item.name}</td>
-        <td>${item.id}</td>
-        <td><span class="access-type ${item.type.toLowerCase()}">${item.type}</span></td>
-        <td>${item.method}</td>
-      `;
-            tableBody.appendChild(row);
-        });
-    });
-
-    // Animação para simular reconhecimento facial
-    function simulateAccess() {
-        const video = document.getElementById('video');
-        const recognitionControls = document.querySelector('.recognition-controls');
-
-        // Efeito visual de reconhecimento
-        video.style.border = "3px solid var(--verde-limao)";
-        video.style.boxShadow = "0 0 20px rgba(165, 214, 16, 0.7)";
-
-        // Desabilita botões durante o processo
-        recognitionControls.querySelectorAll('button').forEach(btn => {
-            btn.disabled = true;
-            btn.style.opacity = "0.7";
-        });
-
-        // Simula tempo de processamento
-        setTimeout(() => {
-            video.style.border = "3px solid var(--verde-militar)";
-            video.style.boxShadow = "none";
-
-            // Recria o efeito de sucesso
-            const successEffect = document.createElement('div');
-            successEffect.style.position = "absolute";
-            successEffect.style.top = "0";
-            successEffect.style.left = "0";
-            successEffect.style.width = "100%";
-            successEffect.style.height = "100%";
-            successEffect.style.background = "rgba(165, 214, 16, 0.3)";
-            successEffect.style.borderRadius = "7px";
-            successEffect.style.animation = "fadeOut 1s ease forwards";
-
-            document.querySelector('.video-container').appendChild(successEffect);
-
-            // Habilita botões novamente
-            recognitionControls.querySelectorAll('button').forEach(btn => {
-                btn.disabled = false;
-                btn.style.opacity = "1";
-            });
-
-            // Notificação de sucesso
-            alert("Acesso liberado para: Aluno Exemplo\nMatrícula: 2023001");
-        }, 2000);
-    }
-
-    // Adiciona classe dinâmica para os tipos de acesso
-    document.addEventListener('DOMContentLoaded', function () {
-        setTimeout(() => {
-            document.querySelectorAll('.access-type').forEach(el => {
-                if (el.textContent === 'Entrada') {
-                    el.classList.add('entrada');
-                } else {
-                    el.classList.add('saida');
-                }
-            });
-        }, 600);
-    });
-</script>
 
 <body>
     <div id="menu-container"></div>
@@ -105,16 +144,8 @@
 
             <div class="face-recognition">
                 <div class="video-container">
-                    <div style="position: relative; width: 500px; height: 350px;">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                            frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0;">
-                        </iframe>
-                        <img src="../static/images/3.png"
-                            style="position: absolute; top: 0; left: 0; width: 100%; cursor: pointer;"
-                            onclick="this.style.display='none'">
-                    </div>
+                    <canvas id="recognitionChart"></canvas>
                 </div>
-
             </div>
         </div>
 
@@ -135,8 +166,7 @@
                     </tr>
                 </thead>
                 <tbody id="recentAccessTable">
-                    <!-- Preenchido por JavaScript -->
-                </tbody>
+                    </tbody>
             </table>
         </div>
     </main>
