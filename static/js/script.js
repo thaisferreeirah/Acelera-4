@@ -4,6 +4,7 @@ fetch('/static/components/menu.html')
         document.getElementById('menu-container').innerHTML = html;
 
         atualizarStatusMenu();
+        verificarNivelAcessoMenu();
     });
 
 let reconhecimentoAtivo = JSON.parse(localStorage.getItem("reconhecimentoAtivo")) || false;
@@ -43,6 +44,24 @@ function atualizarStatusMenu() {
 function toggleMenu() {
     const menu = document.getElementById('menu-superior');
     menu.classList.toggle('active');
+}
+
+function verificarNivelAcessoMenu() {
+    fetch('/nivel-acesso')
+        .then(response => response.json())
+        .then(data => {
+            const accessLevel = data.access_level.trim();
+
+            if (accessLevel === 'a') {
+                const adminItems = document.querySelectorAll('.admin-item');
+                adminItems.forEach(item => {
+                    item.classList.remove('admin-item');
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao obter access level:', error);
+        });
 }
 
 socket.on('reconhecimento_status', (statusAtivo) => {

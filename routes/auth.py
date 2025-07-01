@@ -21,7 +21,7 @@ def login():
     if user and user.check_password(password):
         session["user_id"] = user.id
         session["access_level"] = user.access_level
-        #return redirect(url_for("main.index"))
+        return redirect(url_for("main.index"))
 
     else:
         return "Credenciais incorretas", 401

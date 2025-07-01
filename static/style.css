@@ -892,3 +892,7 @@ p {
     flex: 1;
     min-width: 360px;
 }
+
+.admin-item {
+    display: none;
+}
