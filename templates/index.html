@@ -15,7 +15,7 @@
             fetch('/histrectest') 
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        throw new Error(`Erro: ${response.status}`);
                     }
                     return response.json();
                 })
@@ -152,7 +152,6 @@
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-bell"></i> Últimos Acessos</h2>
-                <a href="/historico">Ver todos</a>
             </div>
 
             <table class="table">
