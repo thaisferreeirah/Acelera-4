@@ -20,7 +20,9 @@ def login():
     user = User.query.filter_by(email=email).first()
     if user and user.check_password(password):
         session["user_id"] = user.id
-        return redirect(url_for("main.index"))
+        session["access_level"] = user.access_level
+        #return redirect(url_for("main.index"))
+
     else:
         return "Credenciais incorretas", 401
 
@@ -125,3 +127,9 @@ def delete_user(id):
 def logout():
     session.clear()
     return redirect(url_for('auth.login'))
+
+@auth.route("/nivel-acesso")
+@login_required
+def get_access_level():
+    access_level = session.get("access_level")
+    return jsonify({'access_level': access_level})
