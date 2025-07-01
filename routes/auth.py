@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, render_template, redirect, url_for
+from flask import Blueprint, request, session, render_template, redirect, url_for, jsonify
 from models.user import db, User
 from helpers import login_required
 
@@ -20,7 +20,9 @@ def login():
     user = User.query.filter_by(username=username).first()
     if user and user.check_password(password):
         session["user_id"] = user.id
-        return redirect(url_for("main.index"))
+        session["access_level"] = user.access_level
+        #return redirect(url_for("main.index"))
+
     else:
         return "Credenciais incorretas", 401
 
@@ -69,3 +71,9 @@ def signup():
 def logout():
     session.clear()
     return "Sessão Limpa.", 204
+
+@auth.route("/nivel-acesso")
+@login_required
+def get_access_level():
+    access_level = session.get("access_level")
+    return jsonify({'access_level': access_level})
