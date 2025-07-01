@@ -193,7 +193,10 @@
                         style="display: inline-block; width: auto;">
                     <input type="date" id="filterDate" class="form-control" style="display: inline-block; width: auto;">
                     <button class="btn btn-primary" onclick="resetFilter()">
-                        <i class="fas fa-sync-alt"></i> Limpar
+                        <i class="fas fa-eraser"></i> Limpar
+                    </button>
+                    <button class="btn btn-secondary" onclick="carregarHistorico()">
+                        <i class="fas fa-sync-alt"></i>
                     </button>
                 </div>
             </div>
@@ -281,9 +284,8 @@
         });
 
         function abrirPortao() {
-            alert("Portão aberto manualmente!");
-            // Requisição para abrir o portão
             fetch("{{ url_for('esp.open_gate') }}");
+            alert("Portão aberto manualmente!");
         }
 
         function registrarEntrada() {

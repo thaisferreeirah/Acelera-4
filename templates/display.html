@@ -11,33 +11,40 @@
     <style>
         .main-content {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-        }
-
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-            width: auto;
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #000000;
         }
 
         h2 {
             font-size: 24px;
-            color: #2C3E21;
+            color: #dadada;
             margin-top: 20px;
+            text-align: center;
+        }
+
+        #stream {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background-color: #000000;
+            
         }
     </style>
 </head>
 
 <body>
     <div class="main-content">
-        <div class="card">
-            <img id="stream">
-            <h2 id="recognized-name">Posicione o rosto no centro da câmera</h2>
-        </div>
+        <img id="stream">
+        <h2 id="recognized-name">Posicione o rosto no centro da câmera e não sorria</h2>
     </div>
 
     <script>

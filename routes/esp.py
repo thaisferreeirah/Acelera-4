@@ -18,9 +18,9 @@ ESP32_WROOM_URL = "http://esp32wroom.local/activate"
 ESP32_CAM_URL = "http://esp32cam.local:81/stream"
 FLASK_SERVER_URL = config.FLASK_URL
 
-@esp.route('/reconhecimentoDisplay')
-def reconhecimentoDisplay():
-    return render_template('reconhecimentoDisplay.html')  # Novo nome do HTML
+@esp.route('/display')
+def display():
+    return render_template('display.html')  # Novo nome do HTML
 
 ultimo_reconhecimento = 0  # Tempo da última ativação
 COOLDOWN_TIME = 5  # Tempo mínimo entre ativações (segundos)
