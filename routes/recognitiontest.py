@@ -95,30 +95,30 @@ def get_photo(id):
         if os.path.exists(caminho_arquivo):
             return jsonify({"foto": url_for('static', filename=f'images/{id}.{ext}')})
 
-    return jsonify({"foto": url_for('static', filename='images/default.jpg')})  # Foto padrão se não encontrar
+    return jsonify({"foto": url_for('static', filename='images/1.png')})  # Foto padrão se não encontrar
 
 
 ###############################################
 # Cadastrar um usuário
-from models.user import db, User
-
-def cadastrarsemlogin():
-    name = "Johnny Bravo"
-    email = "jojo@email.com"
-    password = "123123"
-    access_level = "Administrador"
-    
-    match access_level:
-        case 'Administrador':
-            access_level='a'
-        case 'Porteiro':
-            access_level='p'
-        case _:
-            return "Inválido!", 400
-    
-    user = User(name=name, email=email, access_level=access_level)
-    user.hash_password(password)
-    db.session.add(user)
-    db.session.commit()
-
-    return 'a'
+#from models.user import db, User
+#
+#def cadastrarsemlogin():
+#    name = "Johnny Bravo"
+#    email = "jojo@email.com"
+#    password = "123123"
+#    access_level = "Administrador"
+#    
+#    match access_level:
+#        case 'Administrador':
+#            access_level='a'
+#        case 'Porteiro':
+#            access_level='p'
+#        case _:
+#            return "Inválido!", 400
+#    
+#    user = User(name=name, email=email, access_level=access_level)
+#    user.hash_password(password)
+#    db.session.add(user)
+#    db.session.commit()
+#
+#    return 'a'

@@ -163,7 +163,7 @@
 
                 <div class="form-row">
                     <div class="form-group form-foto">
-                        <img id="fotoPessoa" src="static/images/default.jpg" alt="Foto do usuário">
+                        <img id="fotoPessoa" src="static/images/1.png" alt="Foto do usuário">
                     </div>
 
                     <div class="form-group form-input">
@@ -256,10 +256,10 @@
             fetch(`/get_photo/${id}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("fotoPessoa").src = data.foto ? data.foto : "default.jpg";
+                    document.getElementById("fotoPessoa").src = data.foto ? data.foto : "1.png";
                 })
                 .catch(() => {
-                    document.getElementById("fotoPessoa").src = "/static/images/default.jpg";
+                    document.getElementById("fotoPessoa").src = "/static/images/1.png";
                 });
         }
 
@@ -269,7 +269,7 @@
             if (selectedOption) {
                 buscarFoto(selectedOption.dataset.id);
             } else {
-                document.getElementById("fotoPessoa").src = "/static/images/default.jpg";
+                document.getElementById("fotoPessoa").src = "/static/images/1.png";
             }
         });
 
@@ -279,7 +279,7 @@
             if (selectedOption) {
                 buscarFoto(selectedOption.value);
             } else {
-                document.getElementById("fotoPessoa").src = "/static/images/default.jpg";
+                document.getElementById("fotoPessoa").src = "/static/images/1.png";
             }
         });
 
@@ -342,7 +342,7 @@
             document.getElementById("searchBox").value = "";
             document.getElementById("idBox").value = "";
             document.getElementById("descricao").value = "";
-            document.getElementById("fotoPessoa").src = "static/images/default.jpg";
+            document.getElementById("fotoPessoa").src = "static/images/1.png";
         }
 
         function aplicarFiltro() {
