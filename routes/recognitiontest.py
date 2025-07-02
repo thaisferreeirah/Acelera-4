@@ -81,9 +81,11 @@ def manuallogtest():
 # Busca os nomes e IDs dos autorizados
 @rectest.route('/get_authorized_name_id')
 def get_authorized_name_id():
-    members = Authorized.query.all()  # Obtém todos os registros da tabela
+    # Filtra os registros onde 'position' é NULL
+    members = Authorized.query.filter(Authorized.position == None).all()
+
     result = [{"id": member.authorized_id, "name": member.authorized_name} for member in members]
-    return jsonify(result)  # Retorna os dados em formato JSON
+    return jsonify(result)
 
 # Busca a foto do autorizado pelo ID
 @rectest.route('/get_photo/<int:id>')
