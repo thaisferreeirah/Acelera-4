@@ -23,7 +23,7 @@ def display():
     return render_template('display.html')  # Novo nome do HTML
 
 ultimo_reconhecimento = 0  # Tempo da última ativação
-COOLDOWN_TIME = 5  # Tempo mínimo entre ativações (segundos)
+COOLDOWN_TIME = 7  # Tempo mínimo entre ativações (segundos)
 reconhecimento_ativo = False
 
 # Função para permitir exibir a captura do ESP32Cam em mais de uma página e para fazer o reconhecimento facial
