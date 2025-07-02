@@ -21,14 +21,14 @@ def members_page():
 @members.route("/membros", methods=["GET"])
 #@login_required
 def get_members():
-    # Ordena os resultados pelo ID em ordem decrescente (do último para o primeiro)
-    authorized_members = Authorized.query.order_by(Authorized.authorized_id.desc()).all()
+    # Busca membros cuja posição é nula (NULL)
+    null_position_members = Authorized.query.filter(Authorized.position == None).order_by(Authorized.authorized_id.desc()).all()
 
-    if not authorized_members:
-        return "Nenhum membro autorizado encontrado!", 404
+    if not null_position_members:
+        return "Nenhum membro com posição nula encontrado!", 404
 
     members_list = []
-    for member in authorized_members:
+    for member in null_position_members:
         members_list.append({
             "id": member.authorized_id,
             "name": member.authorized_name,
@@ -146,12 +146,12 @@ def delete_member(id):
     member = Authorized.query.get(id)
 
     if not member:
-        return "Membro não encontrado", 404
-
+        return jsonify({"message": "Não encontrado!"}), 404
+    
     # Caminhos possíveis para a imagem (jpg, jpeg, png)
     padrao_imagem = f"static/images/{member.authorized_id}.*"
     arquivos = glob.glob(padrao_imagem)
-
+    
     # Remove todos os arquivos encontrados com esse ID
     for caminho in arquivos:
         try:
@@ -159,7 +159,9 @@ def delete_member(id):
         except Exception as e:
             return f"Erro ao excluir imagem: {str(e)}", 500
 
-    db.session.delete(member)
+    # Atualiza os dados
+    member.position = "Deletado"
+
     db.session.commit()
 
-    return "Apagado com sucesso!", 204
+    return jsonify({"message": "Apagado com sucesso!"}), 200
