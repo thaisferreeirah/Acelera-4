@@ -1,7 +1,7 @@
 from datetime import datetime
 import os
 
-from flask import Blueprint, jsonify, request, url_for, render_template
+from flask import Blueprint, jsonify, request, url_for, render_template, session
 
 from models.authorized_member import Authorized
 from models.recognition_event import Recognition
@@ -29,7 +29,9 @@ def reclogtest():
     time = datetime.today().time().strftime("%H:%M:%S")  # Formata sem os decimais
     method = "Reconhecimento Facial"
 
-    member = Recognition(authorized_id=auth_id, date=date, time=time, method=method)
+    user_id = session["user_id"]
+
+    member = Recognition(authorized_id=auth_id, date=date, time=time, method=method, user_id=user_id)
     db.session.add(member)
     db.session.commit()
 
@@ -72,7 +74,9 @@ def manuallogtest():
     authorized_id = request.json.get("id")
     description = request.json.get("descricao")
 
-    member = Recognition(authorized_id=authorized_id, date=date, time=time, method=method, description=description)
+    user_id = session["user_id"]
+
+    member = Recognition(authorized_id=authorized_id, date=date, time=time, method=method, description=description, user_id=user_id)
     db.session.add(member)
     db.session.commit()
 

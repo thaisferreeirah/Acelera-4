@@ -8,4 +8,5 @@ class Recognition(db.Model):
     time = db.Column(db.Time)
     method = db.Column(db.String(30))
     description = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
